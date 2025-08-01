@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.9] - 2025-08-01
+## [0.1.10] - 2025-08-01
 
 ### 🔧 Module System Improvements
 - **Dual Package Support**: Added support for both ESModule and CommonJS formats
