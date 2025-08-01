@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9] - 2025-08-01
+
+### 🔧 Module System Improvements
+- **Dual Package Support**: Added support for both ESModule and CommonJS formats
+  - ESModule: `dist/index.js` with `dist/index.d.ts`
+  - CommonJS: `dist/index.cjs` with `dist/index.d.cts`
+- **Package Exports**: Implemented proper `exports` field in package.json for modern module resolution
+- **Build System**: Migrated from TypeScript compiler to tsup for better dual package generation
+- **Natural TypeScript**: Removed need for `.js` extensions in TypeScript import statements
+- **Custom Build Script**: Added `scripts/build.ts` following vite-plugin-pwa patterns
+
+### 🚀 Developer Experience
+- **Module Compatibility**: Fixed ESModule resolution issues that caused import errors
+- **Build Tools**: Added rimraf and esno for better build pipeline management
+- **Type Generation**: Automatic generation of both `.d.ts` and `.d.cts` type definitions
+
+### 📦 Dependencies
+- **Added**: `tsup@^8.5.0` for dual package building
+- **Added**: `rimraf@^6.0.1` for clean directory operations
+- **Added**: `esno@^4.8.0` for TypeScript execution
+
 ## [0.1.0] - 2025-08-01
 
 ### ✨ Major Improvements
