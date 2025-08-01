@@ -91,12 +91,23 @@ jobs:
             node -e "
               const fs = require('fs');
               const coverage = JSON.parse(fs.readFileSync('coverage/coverage-final.json', 'utf8'));
-              const totalCoverage = Object.values(coverage).reduce((acc, file) => {
-                const pct = file.statements?.pct || 0;
-                return acc + pct;
-              }, 0) / Object.keys(coverage).length;
+              
+              // Calculate total coverage from all files
+              let totalStatements = 0;
+              let coveredStatements = 0;
+              
+              Object.values(coverage).forEach(file => {
+                if (file.s) {
+                  const statements = Object.values(file.s);
+                  totalStatements += statements.length;
+                  coveredStatements += statements.filter(count => count > 0).length;
+                }
+              });
+              
+              const totalCoverage = totalStatements > 0 ? (coveredStatements / totalStatements) * 100 : 0;
               
               console.log('📊 Test coverage:', totalCoverage.toFixed(2) + '%');
+              console.log('📊 Covered statements:', coveredStatements + '/' + totalStatements);
               
               if (totalCoverage < 90) {
                 console.error('❌ Coverage below 90% requirement');
