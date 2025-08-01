@@ -1,4 +1,70 @@
-# Release Notes - vite-plugin-gas v0.1.15
+# Release Notes - vite-plugin-gas v0.1.16
+
+## 🎉 What's New in v0.1.16
+
+### 🚀 Major Improvements
+
+#### Automatic appsscript.json Management
+The plugin now automatically copies your `appsscript.json` file to the build output directory:
+
+```typescript
+// vite.config.ts - Zero configuration needed!
+export default defineConfig({
+  plugins: [gas()]  // copyAppsscriptJson: true by default
+})
+```
+
+**File Structure:**
+```
+project/
+├── src/main.ts
+├── appsscript.json      ← Source manifest
+└── dist/
+    ├── main.js
+    └── appsscript.json  ← Automatically copied!
+```
+
+#### Enhanced Development Experience
+- **TypeScript Integration**: Added comprehensive type checking with `pnpm type-check`
+- **Quality Assurance**: 97%+ test coverage with 63 comprehensive tests
+- **CI/CD Improvements**: Streamlined GitHub Actions workflow with consistent commands
+- **Developer Tools**: Enhanced error handling and logging throughout the build process
+
+### 🧪 Testing & Quality Improvements
+
+#### Comprehensive Test Suite
+- **writeBundle Hook Testing**: Full testing of the appsscript.json copy functionality
+- **FileDetector Coverage**: 100% coverage with filesystem mocking for reliable tests
+- **Type Safety**: All TypeScript errors resolved with proper type definitions
+- **Edge Cases**: Comprehensive testing of error scenarios and edge cases
+
+#### Enhanced Code Quality
+- **Consistent APIs**: Standardized all plugin configuration types
+- **Better Error Messages**: Improved error handling with descriptive messages
+- **Documentation**: Enhanced inline documentation and code comments
+
+### 🔧 Configuration Options
+
+The new `copyAppsscriptJson` option provides flexible manifest management:
+
+```typescript
+export default defineConfig({
+  plugins: [
+    gas({
+      copyAppsscriptJson: true,    // Default: Copy appsscript.json
+      transformLogger: true,       // Default: Transform console.log
+      autoDetect: true,           // Default: Auto-detect TypeScript files
+      outDir: 'dist'              // Default: Output to dist/
+    })
+  ]
+})
+```
+
+---
+
+# Previous Releases
+
+## Release Notes - vite-plugin-gas v0.1.15
 
 ## 🎉 What's New in v0.1.15
 

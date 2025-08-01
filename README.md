@@ -12,6 +12,7 @@ A Vite plugin for Google Apps Script development with TypeScript support.
 - 📁 **Auto-Detection** - Automatically detects TypeScript files in specified directories
 - 🧹 **Smart File Filtering** - Automatically filters out empty files and comment-only files
 - 🔍 **console.log Transform** - Optionally transforms console.log to Logger.log for GAS compatibility
+- 📋 **appsscript.json Copy** - Automatically copies appsscript.json to output directory for deployment
 
 ## Installation
 
@@ -72,6 +73,7 @@ lib/
 | `exclude` | `string[]` | `['**/*.test.ts', '**/*.spec.ts']` | File patterns to exclude |
 | `outDir` | `string` | `'dist'` | Output directory for compiled files |
 | `transformLogger` | `boolean` | `true` | Replace console.log with Logger.log for GAS |
+| `copyAppsscriptJson` | `boolean` | `true` | Automatically copy appsscript.json to output directory |
 
 ## Advanced Usage
 
@@ -116,6 +118,40 @@ This plugin works seamlessly with [clasp](https://github.com/google/clasp) for G
 npm run build
 clasp push
 ```
+
+### appsscript.json Management
+
+The plugin automatically copies your `appsscript.json` file to the output directory for seamless deployment:
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  plugins: [
+    gas({
+      copyAppsscriptJson: true  // Default: true
+    })
+  ]
+})
+```
+
+**Project Structure:**
+```
+project/
+├── src/
+│   ├── main.ts
+│   └── utils.ts
+├── appsscript.json      # Source manifest
+└── dist/               # Build output
+    ├── main.js
+    ├── utils.js
+    └── appsscript.json  # Automatically copied
+```
+
+**Benefits:**
+- Ensures manifest file is always included in deployments
+- Maintains consistency between source and build directories
+- Works seamlessly with clasp deployment workflow
+- Can be disabled if you prefer manual manifest management
 
 ### Handling Empty Files
 

@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.16] - 2025-08-01
+
+### 🚀 New Features
+- **Automatic appsscript.json Copying**: Added `copyAppsscriptJson` option to automatically copy appsscript.json to build output directory
+  - Configurable via plugin options (default: `true`)
+  - Integrated with Vite's `writeBundle` hook for seamless deployment preparation
+  - Includes proper error handling and logging for copy operations
+
+### 🧪 Testing & Quality
+- **Enhanced Test Coverage**: Achieved >97% test coverage with comprehensive testing suite
+  - Added complete test coverage for `fileDetector.ts` with filesystem mocking
+  - Added `writeBundle` hook testing with proper plugin context simulation
+  - Enhanced `appsscriptCopier` testing with edge case coverage
+- **TypeScript Integration**: Added `type-check` script for development workflow
+  - Integrated TypeScript compilation checking in package.json scripts
+  - Updated CI/CD pipeline to use consistent type checking commands
+- **Code Quality**: Fixed all TypeScript type errors and improved type safety
+  - Updated test files to include new `copyAppsscriptJson` property in option types
+  - Ensured full compatibility with `Required<GasPluginOptions>` interface
+
+### 🛠️ Developer Experience
+- **Improved Documentation**: Enhanced code documentation and inline comments
+- **Quality Assurance**: All 63 tests passing with comprehensive validation
+- **CI/CD Consistency**: Standardized GitHub Actions workflow commands
+
 ## [0.1.15] - 2025-08-01
 
 ### 🚀 Multiple File Input Support
