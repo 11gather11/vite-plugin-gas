@@ -9,7 +9,7 @@
 
 		/* Modules */
 		"module": "ESNext",
-		"moduleResolution": "bundler",
+		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 
@@ -26,7 +26,6 @@
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true,
-		"verbatimModuleSyntax": true,
 
 		/* Type Checking */
 		"strict": true,
