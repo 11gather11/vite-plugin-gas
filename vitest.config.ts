@@ -12,6 +12,7 @@ export default defineConfig({
 				'node_modules/',
 				'dist/',
 				'tests/',
+				'scripts/',
 				'**/*.d.ts',
 				'vitest.config.ts',
 			],
