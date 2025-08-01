@@ -18,7 +18,7 @@ describe('vite-config', () => {
 		expect(config.build?.rollupOptions?.output).toMatchObject({
 			entryFileNames: '[name].js',
 			format: 'iife',
-			inlineDynamicImports: false,
+			inlineDynamicImports: true,
 		})
 		expect(config.build?.lib).toBe(false)
 		expect(config.build?.outDir).toBe(outputDir)
@@ -39,7 +39,7 @@ describe('vite-config', () => {
 		applyGasViteConfig(config, entryFiles, outputDir)
 
 		expect(config.build?.sourcemap).toBe(true)
-		expect(config.build?.rollupOptions?.external).toEqual(['some-external'])
+		expect(config.build?.rollupOptions?.external).toEqual([])
 		expect(config.build?.rollupOptions?.input).toEqual(entryFiles)
 	})
 
