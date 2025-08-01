@@ -176,8 +176,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Verify build artifacts
+        run: |
+          echo "📦 Verifying build artifacts..."
+          ls -la dist/
+          echo "📄 Package information:"
+          cat package.json | grep -E '"name"|"version"|"main"|"types"'
+          echo "🔐 NPM authentication check:"
+          npm config get registry
+          echo "Registry set to: $(npm config get registry)"
+
       - name: Publish to npm
-        run: npm publish --provenance --access public
+        run: |
+          echo "🚀 Publishing to npm..."
+          if npm whoami; then
+            echo "✅ NPM authentication successful"
+          else
+            echo "❌ NPM authentication failed"
+            exit 1
+          fi
+          
+          if npm publish --provenance --access public; then
+            echo "✅ Package published successfully"
+          else
+            echo "❌ Package publication failed"
+            echo "Checking if version already exists..."
+            npm view vite-plugin-gas versions --json
+            exit 1
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
