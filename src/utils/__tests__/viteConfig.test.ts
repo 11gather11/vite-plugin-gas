@@ -18,7 +18,6 @@ describe('vite-config', () => {
 		expect(config.build?.rollupOptions?.output).toMatchObject({
 			entryFileNames: '[name].js',
 			format: 'iife',
-			inlineDynamicImports: true,
 		})
 		expect(config.build?.lib).toBe(false)
 		expect(config.build?.outDir).toBe(outputDir)

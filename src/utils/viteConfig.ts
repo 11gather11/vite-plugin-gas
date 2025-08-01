@@ -27,9 +27,6 @@ export function applyGasViteConfig(
 	// ライブラリモードを無効化し、通常のアプリケーションビルドとして処理
 	config.build.lib = false
 	config.build.outDir = outputDir
-
-	// コード分割を完全に無効化
-	config.build.rollupOptions.output.inlineDynamicImports = true
 }
 
 /**
