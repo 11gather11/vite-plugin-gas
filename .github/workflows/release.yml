@@ -185,7 +185,8 @@ jobs:
             
             ${{ steps.changelog.outputs.changes || 'See CHANGELOG.md for detailed changes in this release.' }}
           files: |
-            dist/**/*
+            dist/index.js
+            dist/index.d.ts
             README.md
             CHANGELOG.md
             package.json
@@ -204,6 +205,16 @@ jobs:
           echo "🔐 NPM authentication check:"
           npm config get registry
           echo "Registry set to: $(npm config get registry)"
+          
+          echo "🔍 Checking required files for release..."
+          for file in "dist/index.js" "dist/index.d.ts" "README.md" "CHANGELOG.md" "package.json"; do
+            if [ -f "$file" ]; then
+              echo "✅ $file exists"
+            else
+              echo "❌ $file is missing"
+              exit 1
+            fi
+          done
 
       - name: Publish to npm
         id: npm-publish
