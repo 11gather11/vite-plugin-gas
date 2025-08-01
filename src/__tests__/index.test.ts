@@ -44,7 +44,7 @@ describe('gasPlugin', () => {
 		const plugin = gasPlugin() as Plugin
 		const pluginImpl = gasPlugin()
 
-		// プラグイン内部のtransformerが動作することを確認  
+		// プラグイン内部のtransformerが動作することを確認
 		expect(pluginImpl).toBeDefined()
 		expect(plugin.transform).toBeDefined()
 	})
