@@ -1,0 +1,37 @@
+# Lefthook configuration for vite-plugin-gas
+# Documentation: https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+
+pre-commit:
+  parallel: true
+  commands:
+    # Format and lint with Biome
+    biome-check:
+      run: pnpm biome check --fix .
+      stage_fixed: true
+      
+    # Run type checking
+    type-check:
+      run: pnpm exec tsc --noEmit
+      glob: "*.{ts,tsx}"
+
+pre-push:
+  parallel: false
+  commands:
+    # Build the project
+    build:
+      run: pnpm build
+      
+    # Run all tests
+    test:
+      run: pnpm test
+      
+    # Check test coverage
+    coverage:
+      run: pnpm test:coverage
+
+# Skip hooks for specific scenarios
+skip_output:
+  - meta
+  - summary
+
+colors: true

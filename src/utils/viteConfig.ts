@@ -12,16 +12,24 @@ export function applyGasViteConfig(
 	config.build = config.build || {}
 	config.build.rollupOptions = config.build.rollupOptions || {}
 	config.build.rollupOptions.input = entryFiles
+
+	// GAS用の設定：各ファイルを独立したIIFEとして出力
 	config.build.rollupOptions.output = {
 		...config.build.rollupOptions.output,
 		entryFileNames: '[name].js',
 		format: 'iife', // GAS用の即座実行関数形式
-		inlineDynamicImports: false, // 複数エントリー時は無効化
 	}
 
-	// 個別ファイル出力のためのその他設定
-	config.build.lib = false // ライブラリモードを無効化
+	// 各エントリーファイルを独立して処理するための設定
+	config.build.rollupOptions.external = [] // 外部依存を内部化
+	config.build.rollupOptions.preserveEntrySignatures = 'strict'
+
+	// ライブラリモードを無効化し、通常のアプリケーションビルドとして処理
+	config.build.lib = false
 	config.build.outDir = outputDir
+
+	// コード分割を完全に無効化
+	config.build.rollupOptions.output.inlineDynamicImports = true
 }
 
 /**
