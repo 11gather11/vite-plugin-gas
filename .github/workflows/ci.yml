@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test on Node.js ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Build
+        run: pnpm build
+
+      - name: Type check
+        run: pnpm tsc --noEmit
+
+      # Add test step when tests are implemented
+      # - name: Run tests
+      #   run: pnpm test
+
+  build-validation:
+    name: Build Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Check build artifacts
+        run: |
+          if [ ! -f "dist/index.js" ]; then
+            echo "❌ dist/index.js not found"
+            exit 1
+          fi
+          
+          if [ ! -f "dist/index.d.ts" ]; then
+            echo "❌ dist/index.d.ts not found"
+            exit 1
+          fi
+          
+          echo "✅ Build artifacts verified"
+
+      - name: Validate package.json
+        run: |
+          node -e "
+            const pkg = require('./package.json');
+            const dist = require('./dist/index.js');
+            
+            console.log('Package name:', pkg.name);
+            console.log('Package version:', pkg.version);
+            console.log('Main entry:', pkg.main);
+            console.log('Types entry:', pkg.types);
+            
+            if (!pkg.main || !pkg.types) {
+              console.error('❌ Missing main or types in package.json');
+              process.exit(1);
+            }
+            
+            if (typeof dist.default !== 'function' && typeof dist.gasPlugin !== 'function') {
+              console.error('❌ Plugin export not found');
+              process.exit(1);
+            }
+            
+            console.log('✅ Package validation passed');
+          "
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ github.sha }}
+          path: |
+            dist/
+            package.json
+            README.md
+          retention-days: 7
