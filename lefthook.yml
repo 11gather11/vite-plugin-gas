@@ -21,12 +21,8 @@ pre-push:
     build:
       run: pnpm build
       
-    # Run all tests
-    test:
-      run: pnpm test
-      
-    # Check test coverage
-    coverage:
+    # Run all tests with coverage (coverageとtestを統合)
+    test-with-coverage:
       run: pnpm test:coverage
 
 # Skip hooks for specific scenarios

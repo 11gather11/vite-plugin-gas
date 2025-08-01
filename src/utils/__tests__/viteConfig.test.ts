@@ -17,10 +17,13 @@ describe('vite-config', () => {
 		expect(config.build?.rollupOptions?.input).toEqual(entryFiles)
 		expect(config.build?.rollupOptions?.output).toMatchObject({
 			entryFileNames: '[name].js',
-			format: 'iife',
+			format: 'es',
 		})
 		expect(config.build?.lib).toBe(false)
 		expect(config.build?.outDir).toBe(outputDir)
+		expect(config.build?.minify).toBe(false)
+		expect(config.build?.target).toBe('es2017')
+		expect(config.build?.rollupOptions?.treeshake).toBe(false)
 	})
 
 	it('should preserve existing build configuration', () => {
