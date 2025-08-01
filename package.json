@@ -34,12 +34,12 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/gather/vite-plugin-gas.git"
+		"url": "https://github.com/11gather11/vite-plugin-gas.git"
 	},
 	"bugs": {
-		"url": "https://github.com/gather/vite-plugin-gas/issues"
+		"url": "https://github.com/11gather11/vite-plugin-gas/issues"
 	},
-	"homepage": "https://github.com/gather/vite-plugin-gas#readme",
+	"homepage": "https://github.com/11gather11/vite-plugin-gas#readme",
 	"type": "module",
 	"engines": {
 		"node": ">=18.0.0"

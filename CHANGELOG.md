@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2025-08-01
+
+### Fixed
+- Fixed repository URLs in package.json for proper npm provenance
+- Updated GitHub Actions workflows to use packageManager from package.json
+- Resolved pnpm version conflicts in CI/CD
+
+### Changed
+- Removed rimraf dependency in favor of Node.js native fs.rmSync
+- Updated pnpm setup in GitHub Actions workflows
+
 ## [0.0.1] - 2025-08-01
 
 ### Added
@@ -29,5 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ Configurable logger replacement
 - ✅ Development and production build support
 
-[Unreleased]: https://github.com/gather/vite-plugin-gas/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/gather/vite-plugin-gas/releases/tag/v0.0.1
+[Unreleased]: https://github.com/11gather11/vite-plugin-gas/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.2
+[0.0.1]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.1
