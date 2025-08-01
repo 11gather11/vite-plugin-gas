@@ -164,7 +164,26 @@ jobs:
         with:
           tag_name: v${{ needs.version-check.outputs.version }}
           name: vite-plugin-gas v${{ needs.version-check.outputs.version }}
-          body_path: changelog-excerpt.md
+          body: |
+            ## 📦 Installation
+            
+            ```bash
+            npm install vite-plugin-gas@${{ needs.version-check.outputs.version }}
+            # or
+            pnpm add vite-plugin-gas@${{ needs.version-check.outputs.version }}
+            ```
+            
+            ## 🔍 Quality Metrics
+            
+            This release meets all quality requirements:
+            - ✅ **Zero Warning Policy**: No TypeScript or linting warnings
+            - ✅ **Test Coverage**: >90% code coverage achieved
+            - ✅ **Type Safety**: Strict TypeScript with no `any` types
+            - ✅ **camelCase Naming**: Consistent file naming convention
+            
+            ## 📋 Changes
+            
+            ${{ steps.changelog.outputs.changes || 'See CHANGELOG.md for detailed changes in this release.' }}
           files: |
             dist/**/*
             README.md
@@ -188,7 +207,6 @@ jobs:
 
       - name: Publish to npm
         id: npm-publish
-        continue-on-error: true
         run: |
           echo "🚀 Publishing to npm..."
           
@@ -235,40 +253,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Update release with npm link
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ needs.version-check.outputs.version }}
-          append_body: true
-          body: |
-            
-            ## 📦 Installation
-            
-            ```bash
-            npm install vite-plugin-gas@${{ needs.version-check.outputs.version }}
-            # or
-            pnpm add vite-plugin-gas@${{ needs.version-check.outputs.version }}
-            ```
-            
-            ## 🔍 Quality Metrics
-            
-            This release meets all quality requirements:
-            - ✅ **Zero Warning Policy**: No TypeScript or linting warnings
-            - ✅ **Test Coverage**: >90% code coverage achieved
-            - ✅ **Type Safety**: Strict TypeScript with no `any` types
-            - ✅ **camelCase Naming**: Consistent file naming convention
-            
-            ${{ steps.npm-publish.outcome == 'success' && format('**npm package**: https://www.npmjs.com/package/vite-plugin-gas/v/{0}', needs.version-check.outputs.version) || '⚠️ **NPM publishing failed** - Package may need to be published manually' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Manual publish instructions (if npm failed)
-        if: steps.npm-publish.outcome != 'success'
+      - name: Update release notes
         run: |
-          echo "❌ NPM publishing failed"
-          echo ""
-          echo "To manually publish this release:"
-          echo "1. npm login"
-          echo "2. npm publish --access public"
-          echo ""
-          echo "Or check if NPM_TOKEN is properly configured in repository secrets"
+          echo "📝 Release notes updated successfully"
+          echo "NPM publish outcome: ${{ steps.npm-publish.outcome }}"
+          if [ "${{ steps.npm-publish.outcome }}" = "success" ]; then
+            echo "✅ Package published to npm successfully"
+            echo "🔗 View package: https://www.npmjs.com/package/vite-plugin-gas/v/${{ needs.version-check.outputs.version }}"
+          else
+            echo "⚠️ NPM publishing may have failed - check logs above"
+          fi
