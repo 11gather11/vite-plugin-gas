@@ -1,4 +1,6 @@
 import type { Plugin } from 'vite'
+import { glob } from 'tinyglobby'
+import { resolve, relative, parse } from 'node:path'
 
 export interface GasPluginOptions {
 	// 出力ターゲット（GASはES5互換が安全）
@@ -38,6 +40,28 @@ export default function gasPlugin(options: GasPluginOptions = {}): Plugin {
 
 	return {
 		name: 'vite-plugin-gas',
+
+		async config(config) {
+			// 自動的にTSファイルを検出してVite設定を更新
+			const entryFiles = await detectTypeScriptFiles(opts.entryDir)
+			
+			if (Object.keys(entryFiles).length > 0) {
+				// rollupOptionsを自動設定
+				config.build = config.build || {}
+				config.build.rollupOptions = config.build.rollupOptions || {}
+				config.build.rollupOptions.input = entryFiles
+				config.build.rollupOptions.output = {
+					...config.build.rollupOptions.output,
+					entryFileNames: '[name].js',
+					format: 'iife' // GAS用の即座実行関数形式
+				}
+				
+				console.log(`[vite-plugin-gas] Auto-detected ${Object.keys(entryFiles).length} TypeScript files:`)
+				Object.keys(entryFiles).forEach(name => {
+					console.log(`  - ${name}: ${entryFiles[name]}`)
+				})
+			}
+		},
 
 		configResolved(_config) {
 			// Vite設定が解決された後に呼ばれる
@@ -138,4 +162,34 @@ function preserveGasFunctions(code: string): string {
 	}
 
 	return result
+}
+
+/**
+ * TypeScriptファイルを自動検出してエントリーポイントとして設定
+ */
+async function detectTypeScriptFiles(entryDir: string): Promise<Record<string, string>> {
+	try {
+		const pattern = `${entryDir}/**/*.ts`
+		const files = await glob([pattern], { 
+			ignore: ['**/*.d.ts', '**/node_modules/**'] 
+		})
+		
+		const entries: Record<string, string> = {}
+		
+		for (const file of files) {
+			const relativePath = relative(entryDir, file)
+			const parsed = parse(relativePath)
+			// ディレクトリ構造を保持したエントリー名を生成
+			const entryName = parsed.dir 
+				? `${parsed.dir.replace(/[/\\]/g, '_')}_${parsed.name}`
+				: parsed.name
+			
+			entries[entryName] = resolve(file)
+		}
+		
+		return entries
+	} catch (error) {
+		console.warn('[vite-plugin-gas] Failed to detect TypeScript files:', error)
+		return {}
+	}
 }

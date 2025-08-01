@@ -22,7 +22,9 @@ yarn add vite-plugin-gas --dev
 
 ## Usage
 
-### Basic Setup
+### ✨ Auto-Detection Mode (Recommended)
+
+最もシンプルな使用方法です。プラグインが自動的に `src/` ディレクトリ内のTSファイルを検出します：
 
 ```typescript
 // vite.config.ts
@@ -32,11 +34,39 @@ import gas from 'vite-plugin-gas'
 export default defineConfig({
   plugins: [
     gas({
-      target: 'es5',
-      entryDir: 'src',
-      outputDir: 'dist'
+      entryDir: 'src',  // TSファイルを検索するディレクトリ
+      target: 'es5'     // GAS互換のためES5推奨
     })
   ]
+})
+```
+
+```
+📁 Project Structure:
+src/
+├── main.ts       # → dist/main.js
+├── utils.ts      # → dist/utils.js
+├── triggers.ts   # → dist/triggers.js
+└── lib/
+    └── helper.ts # → dist/lib_helper.js
+```
+
+### 🔧 Manual Configuration
+
+手動でエントリーポイントを指定したい場合：
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  plugins: [gas()],
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'src/main.ts',
+        utils: 'src/utils.ts'
+      }
+    }
+  }
 })
 ```
 

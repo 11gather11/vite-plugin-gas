@@ -52,5 +52,8 @@
 	"peerDependencies": {
 		"vite": "^5.0.0 || ^6.0.0 || ^7.0.0"
 	},
-	"packageManager": "pnpm@10.14.0"
+	"packageManager": "pnpm@10.14.0",
+	"dependencies": {
+		"tinyglobby": "^0.2.14"
+	}
 }
