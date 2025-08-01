@@ -68,22 +68,25 @@ jobs:
             if (fs.existsSync('coverage/coverage-final.json')) {
               const coverage = JSON.parse(fs.readFileSync('coverage/coverage-final.json', 'utf8'));
               
-              // Calculate total coverage from all files
               let totalStatements = 0;
               let coveredStatements = 0;
               
               Object.values(coverage).forEach(file => {
-                if (file.s) {
-                  const statements = Object.values(file.s);
-                  totalStatements += statements.length;
-                  coveredStatements += statements.filter(count => count > 0).length;
-                }
+                const statements = file.s || {};
+                const statementMap = file.statementMap || {};
+                
+                const fileStatements = Object.keys(statementMap).length;
+                const fileCovered = Object.values(statements).filter(count => count > 0).length;
+                
+                totalStatements += fileStatements;
+                coveredStatements += fileCovered;
               });
               
               const totalCoverage = totalStatements > 0 ? (coveredStatements / totalStatements) * 100 : 0;
               
               console.log('Total coverage:', totalCoverage.toFixed(2) + '%');
-              console.log('Covered statements:', coveredStatements + '/' + totalStatements);
+              console.log('Covered statements:', coveredStatements);
+              console.log('Total statements:', totalStatements);
               
               if (totalCoverage < 90) {
                 console.error('❌ Coverage below 90% requirement:', totalCoverage.toFixed(2) + '%');
