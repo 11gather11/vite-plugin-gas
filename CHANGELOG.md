@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5] - 2025-08-01
+
+### Fixed
+- 🐛 **Build Error Fix**: Fixed "Invalid value for option output.inlineDynamicImports" error when using multiple entry points
+- 🔧 **Rollup Configuration**: Properly configured output options to prevent conflicts with multiple inputs
+- 📦 **Library Mode**: Disabled library mode for individual file compilation
+
+### Technical
+- Set `inlineDynamicImports: false` for multi-entry builds
+- Added proper `outDir` configuration
+- Improved build compatibility with Vite/Rollup defaults
+
+## [0.0.4] - 2025-08-01
+
+### Added  
+- 🚀 **Auto-Detection Feature**: Automatically detects all `.ts` files in the entry directory
+- 🔍 **Smart Entry Points**: No need to manually configure input files in Vite
+- 📁 **Directory Structure Preservation**: Maintains folder structure in output file names
+- 📦 **tinyglobby Integration**: Added file globbing capabilities for TypeScript file detection
+
+### Changed
+- ♻️ **Simplified Configuration**: Users no longer need to manually specify each TypeScript file
+- 🎯 **Improved Developer Experience**: Just specify `entryDir` and the plugin handles the rest
+- 📚 **Updated Documentation**: Enhanced README with auto-detection examples
+
+### Technical
+- Added `tinyglobby` dependency for file pattern matching
+- Implemented `detectTypeScriptFiles()` function
+- Added automatic Vite configuration through `config` hook
+- Enhanced logging to show detected files
+
 ## [0.0.3] - 2025-08-01
 
 ### Added  
@@ -59,7 +90,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ Configurable logger replacement
 - ✅ Development and production build support
 
-[Unreleased]: https://github.com/11gather11/vite-plugin-gas/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/11gather11/vite-plugin-gas/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.5
+[0.0.4]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.4
 [0.0.3]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.3
 [0.0.2]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.2
 [0.0.1]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.1

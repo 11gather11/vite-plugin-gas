@@ -1,0 +1,200 @@
+name: PR Quality Check
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  quality-check:
+    name: Quality Validation
+    runs-on: ubuntu-latest
+    if: '!github.event.pull_request.draft'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Zero Warning Policy Check
+        run: |
+          echo "🔍 Checking Zero Warning Policy compliance..."
+          
+          # TypeScript check
+          if ! pnpm tsc --noEmit; then
+            echo "❌ TypeScript warnings found"
+            exit 1
+          fi
+          
+          # Lint check
+          if ! pnpm lint; then
+            echo "❌ Linting warnings found"
+            exit 1
+          fi
+          
+          echo "✅ Zero warnings confirmed"
+
+      - name: Format Check
+        run: |
+          if ! pnpm format:check; then
+            echo "❌ Code formatting issues found"
+            echo "💡 Run 'pnpm format' to fix formatting"
+            exit 1
+          fi
+          echo "✅ Code formatting is correct"
+
+      - name: Build Validation
+        run: |
+          echo "🔨 Building project..."
+          pnpm build
+          
+          # Verify build artifacts
+          if [ ! -f "dist/index.js" ] || [ ! -f "dist/index.d.ts" ]; then
+            echo "❌ Build artifacts missing"
+            exit 1
+          fi
+          
+          echo "✅ Build successful"
+
+      - name: Test Execution
+        run: |
+          echo "🧪 Running test suite..."
+          pnpm test
+
+      - name: Coverage Analysis
+        run: |
+          echo "📊 Analyzing test coverage..."
+          pnpm test:coverage
+          
+          # Validate coverage threshold
+          node -e "
+            const fs = require('fs');
+            if (fs.existsSync('coverage/coverage-final.json')) {
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-final.json', 'utf8'));
+              const totalCoverage = Object.values(coverage).reduce((acc, file) => {
+                const pct = file.statements?.pct || 0;
+                return acc + pct;
+              }, 0) / Object.keys(coverage).length;
+              
+              console.log('Current coverage:', totalCoverage.toFixed(2) + '%');
+              
+              if (totalCoverage < 90) {
+                console.error('❌ Coverage below 90% requirement');
+                console.error('Current:', totalCoverage.toFixed(2) + '%');
+                console.error('Required: 90%');
+                process.exit(1);
+              }
+              
+              console.log('✅ Coverage requirement met');
+            } else {
+              console.error('❌ Coverage report not found');
+              process.exit(1);
+            }
+          "
+
+      - name: File Naming Convention Check
+        run: |
+          echo "📝 Checking camelCase naming convention..."
+          
+          # Check for kebab-case files in src/
+          KEBAB_FILES=$(find src/ -name "*-*.ts" -o -name "*-*.js" | grep -v __tests__ || true)
+          
+          if [ -n "$KEBAB_FILES" ]; then
+            echo "❌ Found files using kebab-case naming:"
+            echo "$KEBAB_FILES"
+            echo "💡 Please use camelCase naming convention"
+            exit 1
+          fi
+          
+          echo "✅ File naming convention verified"
+
+      - name: Package Validation
+        run: |
+          echo "📦 Validating package configuration..."
+          
+          node -e "
+            const pkg = require('./package.json');
+            
+            // Check required fields
+            const required = ['name', 'version', 'description', 'main', 'types'];
+            const missing = required.filter(field => !pkg[field]);
+            
+            if (missing.length > 0) {
+              console.error('❌ Missing required package.json fields:', missing);
+              process.exit(1);
+            }
+            
+            // Check files array
+            if (!pkg.files || !Array.isArray(pkg.files)) {
+              console.error('❌ package.json files field missing or invalid');
+              process.exit(1);
+            }
+            
+            console.log('✅ Package configuration valid');
+          "
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pr-coverage-${{ github.event.pull_request.number }}
+          path: coverage/
+          retention-days: 14
+
+      - name: Comment PR Results
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const fs = require('fs');
+            let coverageInfo = '';
+            
+            if (fs.existsSync('coverage/coverage-final.json')) {
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-final.json', 'utf8'));
+              const totalCoverage = Object.values(coverage).reduce((acc, file) => {
+                const pct = file.statements?.pct || 0;
+                return acc + pct;
+              }, 0) / Object.keys(coverage).length;
+              
+              coverageInfo = `
+              ## 📊 Test Coverage: ${totalCoverage.toFixed(2)}%
+              ${totalCoverage >= 90 ? '✅' : '❌'} Coverage requirement ${totalCoverage >= 90 ? 'met' : 'not met'} (90% required)
+              `;
+            }
+            
+            const comment = `
+            ## 🔍 Quality Check Results
+            
+            This PR has been automatically validated against project quality standards:
+            
+            - ✅ Zero Warning Policy
+            - ✅ Code Formatting
+            - ✅ Build Process
+            - ✅ Test Execution
+            - ✅ File Naming Convention
+            - ✅ Package Configuration
+            ${coverageInfo}
+            
+            All quality gates have passed! 🎉
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

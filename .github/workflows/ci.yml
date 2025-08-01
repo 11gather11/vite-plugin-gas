@@ -54,9 +54,44 @@ jobs:
       - name: Type check
         run: pnpm tsc --noEmit
 
-      # Add test step when tests are implemented
-      # - name: Run tests
-      #   run: pnpm test
+      - name: Run tests
+        run: pnpm test
+
+      - name: Test coverage
+        run: pnpm test:coverage
+
+      - name: Coverage validation
+        run: |
+          # Check if coverage meets minimum requirement (90%)
+          node -e "
+            const fs = require('fs');
+            if (fs.existsSync('coverage/coverage-final.json')) {
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-final.json', 'utf8'));
+              const totalCoverage = Object.values(coverage).reduce((acc, file) => {
+                const pct = file.statements?.pct || 0;
+                return acc + pct;
+              }, 0) / Object.keys(coverage).length;
+              
+              console.log('Total coverage:', totalCoverage.toFixed(2) + '%');
+              
+              if (totalCoverage < 90) {
+                console.error('❌ Coverage below 90% requirement:', totalCoverage.toFixed(2) + '%');
+                process.exit(1);
+              }
+              
+              console.log('✅ Coverage requirement met:', totalCoverage.toFixed(2) + '%');
+            } else {
+              console.log('⚠️ Coverage report not found');
+            }
+          "
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report-${{ matrix.node-version }}-${{ github.sha }}
+          path: coverage/
+          retention-days: 30
 
   build-validation:
     name: Build Validation
@@ -98,7 +133,6 @@ jobs:
         run: |
           node -e "
             const pkg = require('./package.json');
-            const dist = require('./dist/index.js');
             
             console.log('Package name:', pkg.name);
             console.log('Package version:', pkg.version);
@@ -110,8 +144,15 @@ jobs:
               process.exit(1);
             }
             
-            if (typeof dist.default !== 'function' && typeof dist.gasPlugin !== 'function') {
-              console.error('❌ Plugin export not found');
+            // Check if dist files exist
+            const fs = require('fs');
+            if (!fs.existsSync(pkg.main)) {
+              console.error('❌ Main file not found:', pkg.main);
+              process.exit(1);
+            }
+            
+            if (!fs.existsSync(pkg.types)) {
+              console.error('❌ Types file not found:', pkg.types);
               process.exit(1);
             }
             

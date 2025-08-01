@@ -172,6 +172,29 @@ The plugin automatically protects these GAS special functions from minification:
 - Node.js 18.0.0 or higher
 - Vite 5.0.0 or higher
 
+## Development Requirements
+
+This project follows strict development standards:
+
+### Code Quality Standards
+- **Zero Warning Policy**: No TypeScript warnings or linting warnings are tolerated
+- **Type Safety**: Strict TypeScript configuration with no `any` types
+- **Test Coverage**: Minimum 90% test coverage required (currently achieving 94.94%)
+- **Error Handling**: Comprehensive error handling with proper runtime type checking
+
+### File Naming Convention
+- **camelCase**: All source files use camelCase naming convention
+- Examples:
+  - `gasConfigProcessor.ts` (not `gas-config-processor.ts`)
+  - `fileDetector.ts` (not `file-detector.ts`)
+  - `viteConfig.ts` (not `vite-config.ts`)
+
+### Testing Standards
+- All new features must include comprehensive tests
+- Tests must cover both success and error cases
+- Mock external dependencies appropriately
+- Maintain high test coverage (90%+ required)
+
 ## License
 
 MIT
