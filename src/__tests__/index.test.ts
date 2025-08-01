@@ -11,6 +11,7 @@ describe('gasPlugin', () => {
 		expect(typeof plugin.config).toBe('function')
 		expect(typeof plugin.transform).toBe('function')
 		expect(typeof plugin.generateBundle).toBe('function')
+		expect(typeof plugin.writeBundle).toBe('function')
 	})
 
 	it('should accept options', () => {
@@ -20,6 +21,7 @@ describe('gasPlugin', () => {
 			include: ['lib'],
 			exclude: ['**/*.ignore.ts'],
 			outDir: 'build',
+			copyAppsscriptJson: false,
 		}
 
 		const plugin = gasPlugin(options) as Plugin
@@ -67,11 +69,13 @@ describe('gasPlugin', () => {
 			exclude: ['**/*.test.ts'],
 			outDir: 'build',
 			transformLogger: false,
+			copyAppsscriptJson: true,
 		}
 
 		expect(typeof options).toBe('object')
 		expect(options.autoDetect).toBe(true)
 		expect(options.transformLogger).toBe(false)
+		expect(options.copyAppsscriptJson).toBe(true)
 	})
 
 	it('should have all required plugin hooks', () => {
@@ -81,5 +85,41 @@ describe('gasPlugin', () => {
 		expect(plugin.config).toBeDefined()
 		expect(plugin.transform).toBeDefined()
 		expect(plugin.generateBundle).toBeDefined()
+	})
+
+	it('should accept copyAppsscriptJson option', () => {
+		const plugin = gasPlugin({ copyAppsscriptJson: true }) as Plugin
+
+		expect(plugin.name).toBe('vite-plugin-gas')
+		expect(typeof plugin.config).toBe('function')
+		expect(typeof plugin.transform).toBe('function')
+		expect(typeof plugin.generateBundle).toBe('function')
+		expect(typeof plugin.writeBundle).toBe('function')
+	})
+
+	it('should execute transform hook with valid TypeScript code', () => {
+		const plugin = gasPlugin({ transformLogger: false })
+
+		// transform関数を抽出してテスト
+		const transformFunc = plugin.transform as (
+			code: string,
+			id: string
+		) => unknown
+
+		const result = transformFunc(
+			'function test() { return "hello"; }',
+			'src/main.ts'
+		)
+
+		expect(result).toBeDefined()
+		// transformはTransformResultオブジェクトまたは文字列を返す
+		expect(typeof result === 'string' || typeof result === 'object').toBe(true)
+	})
+
+	it('should have generateBundle function', () => {
+		const plugin = gasPlugin()
+
+		// generateBundle関数が存在することを確認
+		expect(typeof plugin.generateBundle).toBe('function')
 	})
 })

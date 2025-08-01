@@ -4,11 +4,14 @@ A Vite plugin for Google Apps Script development with TypeScript support.
 
 ## Features
 
-- 🚀 **Individual file compilation** - Compiles each TypeScript file separately for GAS compatibility
-- 🔄 **Module statement removal** - Removes import/export statements that are not supported in GAS
-- 🛡️ **GAS function protection** - Protects special GAS functions (onEdit, onOpen, etc.) from being minified
-- ⚡ **TypeScript support** - Full TypeScript support with GAS API type definitions
-- 🎯 **ES5 compatibility** - Targets ES5 for maximum GAS compatibility
+- 🚀 **Multiple File Support** - Handles multiple TypeScript files with individual compilation
+- 🔄 **Module Statement Removal** - Automatically removes import/export statements unsupported by GAS
+- 🛡️ **GAS Function Protection** - Preserves special GAS functions (onEdit, onOpen, etc.) from optimization
+- ⚡ **TypeScript Support** - Full TypeScript support with GAS API type definitions
+- 🎯 **ES2017 Compatibility** - Optimized for Google Apps Script runtime
+- 📁 **Auto-Detection** - Automatically detects TypeScript files in specified directories
+- 🧹 **Smart File Filtering** - Automatically filters out empty files and comment-only files
+- 🔍 **console.log Transform** - Optionally transforms console.log to Logger.log for GAS compatibility
 
 ## Installation
 
@@ -20,11 +23,11 @@ pnpm add vite-plugin-gas -D
 yarn add vite-plugin-gas --dev
 ```
 
-## Usage
+## Quick Start
 
 ### ✨ Auto-Detection Mode (Recommended)
 
-最もシンプルな使用方法です。プラグインが自動的に `src/` ディレクトリ内のTSファイルを検出します：
+The simplest way to use the plugin. It automatically detects TypeScript files in your source directories:
 
 ```typescript
 // vite.config.ts
@@ -34,61 +37,93 @@ import gas from 'vite-plugin-gas'
 export default defineConfig({
   plugins: [
     gas({
-      entryDir: 'src',  // TSファイルを検索するディレクトリ
-      target: 'es5'     // GAS互換のためES5推奨
+      autoDetect: true,
+      include: ['src', 'lib'],
+      exclude: ['**/*.test.ts', '**/*.spec.ts'],
+      outDir: 'dist',
+      transformLogger: true
     })
   ]
 })
 ```
 
+### 📁 Project Structure Example
+
 ```
 📁 Project Structure:
 src/
-├── main.ts       # → dist/main.js
-├── utils.ts      # → dist/utils.js
-├── triggers.ts   # → dist/triggers.js
-└── lib/
-    └── helper.ts # → dist/lib_helper.js
+├── main.ts           # → dist/main.js
+├── utils/
+│   ├── helper.ts     # → dist/utils/helper.js
+│   └── common.ts     # → dist/utils/common.js
+├── triggers.ts       # → dist/triggers.js
+└── models/
+    └── user.ts       # → dist/models/user.js
+lib/
+    └── api.ts        # → dist/lib/api.js
 ```
 
-### 🔧 Manual Configuration
+## Configuration Options
 
-手動でエントリーポイントを指定したい場合：
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `autoDetect` | `boolean` | `true` | Enable automatic TypeScript file detection |
+| `include` | `string[]` | `['src']` | Directories to include when scanning for files |
+| `exclude` | `string[]` | `['**/*.test.ts', '**/*.spec.ts']` | File patterns to exclude |
+| `outDir` | `string` | `'dist'` | Output directory for compiled files |
+| `transformLogger` | `boolean` | `true` | Replace console.log with Logger.log for GAS |
+
+## Advanced Usage
+
+### Manual Entry Configuration
+
+If you prefer manual control over entry points:
 
 ```typescript
 // vite.config.ts
 export default defineConfig({
-  plugins: [gas()],
+  plugins: [
+    gas({
+      autoDetect: false  // Disable auto-detection
+    })
+  ],
   build: {
     rollupOptions: {
       input: {
         main: 'src/main.ts',
-        utils: 'src/utils.ts'
+        triggers: 'src/triggers.ts',
+        'utils/helper': 'src/utils/helper.ts'
       }
     }
   }
 })
 ```
 
-### Configuration Options
+### Working with Clasp
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `target` | `'es5' \| 'es2015'` | `'es5'` | JavaScript output target |
-| `entryDir` | `string` | `'src'` | Input directory to scan for TypeScript files |
-| `outputDir` | `string` | `'dist'` | Output directory |
-| `compatCheck` | `boolean` | `true` | Enable GAS compatibility checks |
-| `replaceLogger` | `boolean` | `false` | Replace console.log with Logger.log |
-| `removeModuleStatements` | `boolean` | `true` | Remove import/export statements |
-| `preserveGasFunctions` | `boolean` | `true` | Protect GAS special functions from minification |
+This plugin works seamlessly with [clasp](https://github.com/google/clasp) for GAS deployment:
 
-### Project Structure
-
+```json
+// .clasp.json
+{
+  "scriptId": "your-script-id",
+  "rootDir": "./dist"
+}
 ```
-my-gas-project/
-├── src/
-│   ├── main.ts          # Main functions
-│   ├── triggers.ts      # GAS trigger functions
+
+```bash
+# Build and deploy
+npm run build
+clasp push
+```
+
+### Handling Empty Files
+
+The plugin gracefully handles various file states:
+- ✅ Empty files (0 bytes)
+- ✅ Whitespace-only files  
+- ✅ Comment-only files
+- ✅ Files with only type definitions
 │   └── utils/
 │       └── helpers.ts   # Utility functions
 ├── dist/                # Build output (individual files)
@@ -114,6 +149,27 @@ function main() {
 // src/triggers.ts
 function onOpen() {
   main()
+## Example
+
+### Input (TypeScript)
+
+```typescript
+// src/main.ts
+import { helper } from './utils/helper'
+
+export function main() {
+  console.log('Hello, GAS!')
+  helper()
+}
+
+// src/utils/helper.ts
+export function helper() {
+  console.log('Helper function called')
+}
+
+// src/triggers.ts
+function onOpen() {
+  main()
 }
 
 function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit) {
@@ -121,34 +177,40 @@ function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit) {
 }
 ```
 
-#### Output (JavaScript)
+### Output (JavaScript)
 
 ```javascript
 // dist/main.js
-function logMessage(message) {
-  Logger.log(message);
+function helper() {
+  Logger.log('Helper function called');
 }
 
 function main() {
-  logMessage('Hello, GAS!');
+  Logger.log('Hello, GAS!');
+  helper();
+}
+
+// dist/utils/helper.js
+function helper() {
+  Logger.log('Helper function called');
 }
 
 // dist/triggers.js
-/* @preserve onOpen */ function onOpen() {
+function onOpen() {
   main();
 }
 
-/* @preserve onEdit */ function onEdit(e) {
+function onEdit(e) {
   Logger.log('Cell edited:', e.range.getA1Notation());
 }
 ```
 
-## Protected GAS Functions
+## GAS Special Functions
 
-The plugin automatically protects these GAS special functions from minification:
+The plugin automatically preserves these Google Apps Script special functions:
 
 - `onOpen()` - Triggered when a spreadsheet/document is opened
-- `onEdit(e)` - Triggered when a spreadsheet is edited
+- `onEdit(e)` - Triggered when a spreadsheet is edited  
 - `onSelectionChange(e)` - Triggered when selection changes
 - `onFormSubmit(e)` - Triggered when a form is submitted
 - `doGet(e)` - HTTP GET request handler
@@ -172,13 +234,29 @@ The plugin automatically protects these GAS special functions from minification:
 - Node.js 18.0.0 or higher
 - Vite 5.0.0 or higher
 
-## Development Requirements
+## Quality Assurance
 
-This project follows strict development standards:
+This project maintains high quality standards:
 
-### Code Quality Standards
-- **Zero Warning Policy**: No TypeScript warnings or linting warnings are tolerated
-- **Type Safety**: Strict TypeScript configuration with no `any` types
+### Development Standards
+- **Test Coverage**: >90% maintained across all modules
+- **camelCase Convention**: Consistent file naming throughout the project  
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+MIT © [11gather11](https://github.com/11gather11)
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for details about changes in each version.
 - **Test Coverage**: Minimum 90% test coverage required (currently achieving 94.94%)
 - **Error Handling**: Comprehensive error handling with proper runtime type checking
 

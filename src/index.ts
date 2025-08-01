@@ -2,6 +2,7 @@ import type { Plugin } from 'vite'
 import { GasConfigProcessor } from './core/gasConfigProcessor'
 import { GasTransformer } from './core/gasTransformer'
 import type { GasPluginOptions } from './types'
+import { copyAppsscriptJson } from './utils/appsscriptCopier'
 
 /**
  * Google Apps Script用のViteプラグイン
@@ -25,6 +26,16 @@ function gasPlugin(options: GasPluginOptions = {}): Plugin {
 			// Viteから渡されるbundleは適切な型を持っているので
 			// 型チェックはGasTransformer内で行う
 			transformer.generateBundle(bundle)
+		},
+
+		writeBundle() {
+			// appsscript.jsonをコピー
+			if (configProcessor.options.copyAppsscriptJson) {
+				copyAppsscriptJson(
+					process.cwd(),
+					configProcessor.options.outDir || 'dist'
+				)
+			}
 		},
 	}
 }

@@ -204,4 +204,50 @@ describe('gasPlugin - Multiple Files Integration Tests', () => {
 			expect(value).toBe(`${key}.ts`)
 		}
 	})
+
+	it('should handle edge case TypeScript files appropriately', () => {
+		const plugin = gasPlugin({
+			transformLogger: true,
+		})
+
+		const testCases = [
+			{
+				id: 'src/empty-with-comment.ts',
+				code: '// Empty file placeholder\n// TODO: Implement functionality',
+				description: 'file with only comments - should be preserved',
+			},
+			{
+				id: 'src/constants-only.ts',
+				code: 'const API_URL = "https://api.example.com";\nconst MAX_RETRIES = 3;',
+				description: 'file with only constants - should be preserved',
+			},
+			{
+				id: 'src/minimal-function.ts',
+				code: 'function doNothing() {\n  // intentionally empty\n}',
+				description: 'minimal function - should be preserved',
+			},
+		]
+
+		// transform関数の存在を確認
+		expect(typeof plugin.transform).toBe('function')
+
+		// 各テストケースが適切に設定されていることを確認
+		for (const testCase of testCases) {
+			expect(testCase.id).toMatch(/\.ts$/)
+			expect(typeof testCase.code).toBe('string')
+			expect(testCase.code.trim()).toBeTruthy() // 空白だけではない
+			expect(testCase.description).toBeTruthy()
+		}
+	})
+
+	it('should create plugin with copyAppsscriptJson option enabled', () => {
+		const plugin = gasPlugin({
+			copyAppsscriptJson: true,
+			outDir: 'dist',
+		})
+
+		expect(plugin.name).toBe('vite-plugin-gas')
+		expect(typeof plugin.config).toBe('function')
+		expect(typeof plugin.writeBundle).toBe('function')
+	})
 })

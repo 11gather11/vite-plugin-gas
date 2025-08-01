@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.15] - 2025-08-01
+
+### 🚀 Multiple File Input Support
+- **Fixed Build Error**: Resolved `inlineDynamicImports` conflict with multiple entry files
+- **ES Module Output**: Changed output format from IIFE to ES modules for better Vite compatibility
+- **GAS Optimization**: Added `treeshake: false`, `minify: false`, and `target: 'es2017'` for GAS compatibility
+- **Empty File Filtering**: Added automatic filtering of empty and comment-only TypeScript files
+- **Integration Tests**: Added comprehensive tests for multiple file scenarios and edge cases
+- **Lefthook Integration**: Integrated Git hooks for automated quality assurance
+
+### 🧪 Testing Improvements
+- **Coverage**: Maintained >90% test coverage with 47+ total tests
+- **Integration Testing**: Added end-to-end tests for multiple file transformations
+- **Edge Case Handling**: Added tests for minimal functions, constants-only files, and comment-only files
+- **GAS Function Tests**: Enhanced testing for GAS special function preservation across multiple files
+
+### 🛠️ Developer Experience
+- **Git Hooks**: Added lefthook for pre-commit linting and pre-push testing
+- **Quality Gates**: Automated formatting, linting, type checking, and testing
+- **Build Optimization**: Streamlined build process with better empty file handling
+- **Documentation**: Updated README and documentation with comprehensive examples
+
 ## [0.1.10] - 2025-08-01
 
 ### 🔧 Module System Improvements

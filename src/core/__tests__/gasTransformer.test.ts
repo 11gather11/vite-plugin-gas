@@ -11,6 +11,7 @@ describe('GasTransformer', () => {
 				exclude: [],
 				outDir: 'dist',
 				transformLogger: true,
+				copyAppsscriptJson: true,
 			}
 
 			const transformer = new GasTransformer(options)
@@ -39,6 +40,7 @@ describe('GasTransformer', () => {
 				exclude: [],
 				outDir: 'dist',
 				transformLogger: false,
+				copyAppsscriptJson: true,
 			}
 
 			const transformer = new GasTransformer(options)
@@ -68,6 +70,7 @@ export default doGet
 				exclude: [],
 				outDir: 'dist',
 				transformLogger: true,
+				copyAppsscriptJson: true,
 			}
 
 			const transformer = new GasTransformer(options)
@@ -93,6 +96,7 @@ function test() {
 				exclude: [],
 				outDir: 'dist',
 				transformLogger: false,
+				copyAppsscriptJson: true,
 			}
 
 			const transformer = new GasTransformer(options)
@@ -118,6 +122,7 @@ function test() {
 				exclude: [],
 				outDir: 'dist',
 				transformLogger: true,
+				copyAppsscriptJson: true,
 			}
 
 			const transformer = new GasTransformer(options)
@@ -149,6 +154,7 @@ function test() {
 				exclude: [],
 				outDir: 'dist',
 				transformLogger: true,
+				copyAppsscriptJson: true,
 			}
 
 			const transformer = new GasTransformer(options)

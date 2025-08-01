@@ -89,4 +89,23 @@ describe('vite-config', () => {
 
 		consoleSpy.mockRestore()
 	})
+
+	it('should handle empty or whitespace-only TypeScript files', () => {
+		const config: UserConfig = {}
+		const entryFiles = {
+			'src/empty': 'src/empty.ts',
+			'src/whitespace': 'src/whitespace.ts',
+		}
+		const outputDir = 'dist'
+
+		applyGasViteConfig(config, entryFiles, outputDir)
+
+		// Empty files should still be processed normally
+		expect(config.build?.rollupOptions?.input).toEqual(entryFiles)
+		expect(config.build?.rollupOptions?.output).toMatchObject({
+			entryFileNames: '[name].js',
+			format: 'es',
+		})
+		expect(config.build?.outDir).toBe(outputDir)
+	})
 })

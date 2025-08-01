@@ -31,6 +31,12 @@ export interface GasPluginOptions {
 	 * @default true
 	 */
 	transformLogger?: boolean
+
+	/**
+	 * appsscript.jsonを出力ディレクトリにコピーするかどうか
+	 * @default true
+	 */
+	copyAppsscriptJson?: boolean
 }
 
 /**
@@ -42,4 +48,5 @@ export const DEFAULT_OPTIONS: Required<GasPluginOptions> = {
 	exclude: ['**/*.d.ts', '**/*.test.ts', '**/*.spec.ts'],
 	outDir: 'dist',
 	transformLogger: true,
+	copyAppsscriptJson: true,
 }
