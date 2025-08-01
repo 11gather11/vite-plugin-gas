@@ -187,21 +187,49 @@ jobs:
           echo "Registry set to: $(npm config get registry)"
 
       - name: Publish to npm
+        id: npm-publish
+        continue-on-error: true
         run: |
           echo "🚀 Publishing to npm..."
-          if npm whoami; then
-            echo "✅ NPM authentication successful"
-          else
-            echo "❌ NPM authentication failed"
+          
+          # Check if NPM_TOKEN is available
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "❌ NPM_TOKEN is not set in repository secrets"
+            echo "Please add NPM_TOKEN to repository secrets to enable npm publishing"
             exit 1
           fi
           
-          if npm publish --provenance --access public; then
-            echo "✅ Package published successfully"
+          # Verify npm authentication
+          if npm whoami; then
+            echo "✅ NPM authentication successful - User: $(npm whoami)"
+          else
+            echo "❌ NPM authentication failed"
+            echo "Current registry: $(npm config get registry)"
+            echo "Please check NPM_TOKEN configuration"
+            exit 1
+          fi
+          
+          # Check if this version already exists
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if npm view vite-plugin-gas@$CURRENT_VERSION version 2>/dev/null; then
+            echo "⚠️ Version $CURRENT_VERSION already exists on npm"
+            echo "Existing versions:"
+            npm view vite-plugin-gas versions --json
+            exit 1
+          fi
+          
+          # Publish with detailed logging
+          echo "📦 Publishing vite-plugin-gas@$CURRENT_VERSION to npm..."
+          if npm publish --provenance --access public --verbose; then
+            echo "✅ Package published successfully to npm"
+            echo "🔗 View package: https://www.npmjs.com/package/vite-plugin-gas/v/$CURRENT_VERSION"
           else
             echo "❌ Package publication failed"
-            echo "Checking if version already exists..."
-            npm view vite-plugin-gas versions --json
+            echo "Debugging information:"
+            echo "Working directory: $(pwd)"
+            echo "Package.json exists: $(test -f package.json && echo 'yes' || echo 'no')"
+            echo "Dist directory exists: $(test -d dist && echo 'yes' || echo 'no')"
+            ls -la dist/ || echo "No dist directory found"
             exit 1
           fi
         env:
@@ -230,6 +258,17 @@ jobs:
             - ✅ **Type Safety**: Strict TypeScript with no `any` types
             - ✅ **camelCase Naming**: Consistent file naming convention
             
-            **npm package**: https://www.npmjs.com/package/vite-plugin-gas/v/${{ needs.version-check.outputs.version }}
+            ${{ steps.npm-publish.outcome == 'success' && format('**npm package**: https://www.npmjs.com/package/vite-plugin-gas/v/{0}', needs.version-check.outputs.version) || '⚠️ **NPM publishing failed** - Package may need to be published manually' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Manual publish instructions (if npm failed)
+        if: steps.npm-publish.outcome != 'success'
+        run: |
+          echo "❌ NPM publishing failed"
+          echo ""
+          echo "To manually publish this release:"
+          echo "1. npm login"
+          echo "2. npm publish --access public"
+          echo ""
+          echo "Or check if NPM_TOKEN is properly configured in repository secrets"
