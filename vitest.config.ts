@@ -15,6 +15,8 @@ export default defineConfig({
 				'scripts/',
 				'**/*.d.ts',
 				'vitest.config.ts',
+				'**/__mocks__/**',
+				'**/__fixtures__/**',
 			],
 			// 90%以上のカバレッジを強制
 			thresholds: {
