@@ -46,6 +46,11 @@ describe('vite-config', () => {
 		expect(esbuildOptions?.minifyIdentifiers).toBe(false)
 		expect(esbuildOptions?.minifySyntax).toBe(false)
 		expect(esbuildOptions?.keepNames).toBe(true)
+		expect(esbuildOptions?.tsconfigRaw).toEqual({
+			compilerOptions: {
+				removeComments: false,
+			},
+		})
 	})
 
 	it('should not configure comment preservation when disabled', () => {
@@ -67,6 +72,7 @@ describe('vite-config', () => {
 		expect(esbuildOptions?.minifyIdentifiers).toBeUndefined()
 		expect(esbuildOptions?.minifySyntax).toBeUndefined()
 		expect(esbuildOptions?.keepNames).toBe(true)
+		expect(esbuildOptions?.tsconfigRaw).toBeUndefined()
 	})
 
 	it('should preserve existing build configuration', () => {

@@ -114,6 +114,12 @@ export function applyGasViteConfig(
 		config.esbuild.minifyWhitespace = false
 		config.esbuild.minifyIdentifiers = false
 		config.esbuild.minifySyntax = false
+		// TypeScriptコンパイラーオプションでコメント保持を有効化
+		config.esbuild.tsconfigRaw = {
+			compilerOptions: {
+				removeComments: false,
+			},
+		}
 	}
 }
 
