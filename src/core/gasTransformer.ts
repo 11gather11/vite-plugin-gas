@@ -7,7 +7,7 @@ import {
 } from '../utils/codeTransformer'
 
 /**
- * GAS用のTypeScriptファイル変換処理
+ * TypeScript file transformation for GAS
  */
 export class GasTransformer {
 	private readonly options: GasPluginOptions
@@ -17,24 +17,24 @@ export class GasTransformer {
 	}
 
 	/**
-	 * ファイルを変換する（post-transformフック用）
+	 * Transform file (for post-transform hook)
 	 */
 	transform(code: string, id: string): TransformResult | null {
-		// .jsファイル（TypeScriptから変換されたもの）のみ処理
-		// ViteのesbuildがTypeScript→JavaScriptの変換を既に完了している
+		// Only process .js files (already converted from TypeScript)
+		// Vite's esbuild has already completed TypeScript→JavaScript conversion
 		if (!id.endsWith('.js') || id.includes('node_modules')) return null
 
 		let transformedCode = code
 
-		// import/export文を削除
+		// Remove import/export statements
 		transformedCode = removeModuleStatements(transformedCode)
 
-		// console.logをLogger.logに変換（オプション有効時）
+		// Transform console.log to Logger.log (when option is enabled)
 		if (this.options.transformLogger) {
 			transformedCode = transformLogger(transformedCode)
 		}
 
-		// GAS特殊関数を保護
+		// Preserve GAS special functions
 		transformedCode = preserveGasFunctions(transformedCode)
 
 		return {
@@ -44,8 +44,8 @@ export class GasTransformer {
 	}
 
 	/**
-	 * バンドル生成時にGAS特殊関数を保護
-	 * bundleの型は実行時に適切に処理される
+	 * Preserve GAS special functions during bundle generation
+	 * Bundle type is properly handled at runtime
 	 */
 	generateBundle(bundle: Record<string, unknown>): void {
 		Object.keys(bundle).forEach((fileName) => {
@@ -55,14 +55,14 @@ export class GasTransformer {
 				[key: string]: unknown
 			}
 
-			// chunkがコードを持つ出力チャンクかどうかをチェック
+			// Check if chunk is an output chunk that contains code
 			if (
 				chunk &&
 				chunk.type === 'chunk' &&
 				fileName.endsWith('.js') &&
 				typeof chunk.code === 'string'
 			) {
-				// 追加のGAS固有の変換を適用
+				// Apply additional GAS-specific transformations
 				chunk.code = preserveGasFunctions(chunk.code)
 				chunk.code = removeModuleStatements(chunk.code)
 

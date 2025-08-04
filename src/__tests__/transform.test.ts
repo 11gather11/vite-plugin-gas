@@ -36,7 +36,7 @@ describe('gasPlugin - Transform Tests', () => {
 
 				const result = transformFn.call(mockThis, input, 'src/main.js')
 
-				// 結果は文字列またはTransformResultオブジェクト
+				// Result is either a string or TransformResult object
 				expect(result).toBeDefined()
 				if (typeof result === 'string') {
 					expect(result).toContain('Logger.log')
@@ -63,7 +63,7 @@ describe('gasPlugin - Transform Tests', () => {
 
 				const result = transformFn.call(mockThis, input, 'src/styles.css')
 
-				// CSS ファイルは変換されない
+				// CSS files are not transformed
 				expect(result).toBeNull()
 			}
 		}
@@ -76,7 +76,7 @@ describe('gasPlugin - Transform Tests', () => {
 		expect(validatePluginInstance(pluginWithLogger)).toBe(true)
 		expect(validatePluginInstance(pluginWithoutLogger)).toBe(true)
 
-		// どちらのプラグインもtransformフックを持つ
+		// Both plugins have transform hooks
 		if (validatePluginInstance(pluginWithLogger)) {
 			expect(extractTransformHook(pluginWithLogger)).not.toBeNull()
 		}
@@ -114,7 +114,7 @@ describe('gasPlugin - Transform Tests', () => {
 
 				const result = transformFn.call(mockThis, '', 'src/empty.js')
 
-				// 空のファイルでもエラーにならない
+				// Empty files should not throw errors
 				expect(result).toBeDefined()
 			}
 		}

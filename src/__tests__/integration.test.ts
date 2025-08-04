@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
 import gasPlugin from '../index'
 
-// テスト用のモック
+// Mock for testing
 vi.mock('tinyglobby', () => ({
 	glob: vi.fn(),
 }))
 
-// テスト用のモックコンテキスト
+// Mock context for testing
 const createMockContext = () => ({
 	addWatchFile: vi.fn(),
 	cache: new Map(),
@@ -65,7 +65,7 @@ describe('gasPlugin - Integration Tests', () => {
 		if (typeof transformFunction === 'function') {
 			const mockContext = createMockContext()
 
-			// JavaScriptファイルは変換される
+			// JavaScript files are transformed
 			const jsResult = transformFunction.call(
 				mockContext,
 				'console.log("test");',

@@ -4,7 +4,7 @@ import type { GasPluginOptions } from '../types'
 import { autoDetectPathAliases } from './pathAliasDetector'
 
 /**
- * パスエイリアスの自動設定
+ * Automatic path alias configuration
  */
 function ensurePathAliases(
 	config: UserConfig,
@@ -18,7 +18,7 @@ function ensurePathAliases(
 		config.resolve = {}
 	}
 
-	// ユーザーが既にエイリアスを設定している場合は尊重し、不足分を追加
+	// Respect existing user alias configuration and add missing ones
 	if (!config.resolve.alias) {
 		config.resolve.alias = {}
 	}
@@ -27,11 +27,11 @@ function ensurePathAliases(
 
 	let detectedAliases: Record<string, string> = {}
 
-	// 自動検知が有効な場合のみ実行
+	// Execute only when auto-detection is enabled
 	if (options.autoDetectPathAliases) {
 		detectedAliases = autoDetectPathAliases(process.cwd(), config)
 
-		// 自動検知されたエイリアスを適用（既存設定を上書きしない）
+		// Apply auto-detected aliases (don't override existing settings)
 		for (const [key, value] of Object.entries(detectedAliases)) {
 			if (!aliases[key]) {
 				aliases[key] = resolve(process.cwd(), value.replace('./', ''))
@@ -39,7 +39,7 @@ function ensurePathAliases(
 		}
 	}
 
-	// デフォルトのパスエイリアスを設定（既存設定や自動検知がない場合）
+	// Set default path aliases (when no existing settings or auto-detection)
 	for (const [key, value] of Object.entries(options.pathAliases)) {
 		if (!aliases[key]) {
 			aliases[key] = resolve(process.cwd(), value.replace('./', ''))
@@ -48,7 +48,7 @@ function ensurePathAliases(
 }
 
 /**
- * GAS用のVite設定を適用
+ * Apply Vite configuration for GAS
  */
 export function applyGasViteConfig(
 	config: UserConfig,
@@ -56,61 +56,61 @@ export function applyGasViteConfig(
 	outputDir: string,
 	options?: Required<GasPluginOptions>
 ): void {
-	// パスエイリアスを自動設定
+	// Auto-configure path aliases
 	if (options) {
 		ensurePathAliases(config, options)
 	}
 
-	// rollupOptionsを自動設定
+	// Auto-configure rollupOptions
 	config.build = config.build || {}
 	config.build.rollupOptions = config.build.rollupOptions || {}
 	config.build.rollupOptions.input = entryFiles
 
-	// GAS用の設定：各ファイルを独立したチャンクとして出力
+	// GAS configuration: output each file as independent chunks
 	const outputOptions = {
 		...config.build.rollupOptions.output,
 		entryFileNames: '[name].js',
 		chunkFileNames: '[name].js',
-		format: 'es' as const, // ESモジュール形式で出力（変換処理でimport/exportを削除）
+		format: 'es' as const, // Output in ES module format (import/export removed by transformation)
 	}
 
-	// manualChunksを削除してチャンク分割を無効化
+	// Remove manualChunks to disable chunk splitting
 	if (typeof outputOptions === 'object' && 'manualChunks' in outputOptions) {
 		delete outputOptions.manualChunks
 	}
 
 	config.build.rollupOptions.output = outputOptions
 
-	// 各エントリーファイルを独立して処理するための設定
-	// パスエイリアスを含む内部モジュールは内部化、node_modulesは外部化しない
+	// Configuration for processing each entry file independently
+	// Internalize path alias modules, don't externalize node_modules
 	config.build.rollupOptions.external = (id: string) => {
-		// パスエイリアス（@/で始まる）は内部化
+		// Internalize path aliases (starting with @/)
 		if (id.startsWith('@/')) return false
-		// 相対パス・絶対パスは内部化
+		// Internalize relative/absolute paths
 		if (id.startsWith('.') || id.startsWith('/')) return false
-		// その他（node_modulesなど）も内部化してバンドル
+		// Internalize others (node_modules, etc.) for bundling
 		return false
 	}
-	config.build.rollupOptions.treeshake = false // treeshakingを無効化してコードの削除を防ぐ
+	config.build.rollupOptions.treeshake = false // Disable treeshaking to prevent code removal
 	config.build.rollupOptions.preserveEntrySignatures = 'strict'
 
-	// ライブラリモードを無効化し、通常のアプリケーションビルドとして処理
+	// Disable library mode and process as normal application build
 	config.build.lib = false
 	config.build.outDir = outputDir
-	config.build.minify = false // minify無効化
-	config.build.target = 'es2017' // GAS対応のターゲット
-	config.build.sourcemap = false // ソースマップ無効化
+	config.build.minify = false // Disable minification
+	config.build.target = 'es2017' // Target for GAS compatibility
+	config.build.sourcemap = false // Disable sourcemap
 
-	// esbuildの設定（TypeScript変換）
+	// esbuild configuration (TypeScript transformation)
 	config.esbuild = config.esbuild || {}
 	config.esbuild.target = 'es2017'
 	config.esbuild.format = 'esm'
-	config.esbuild.keepNames = true // 関数名を保持
+	config.esbuild.keepNames = true // Preserve function names
 
-	// コメント保持設定
+	// Comment preservation configuration
 	if (options?.preserveComments) {
-		config.esbuild.legalComments = 'inline' // 法的コメントを保持
-		// すべてのコメントを保持するため、minificationを無効化
+		config.esbuild.legalComments = 'inline' // Preserve legal comments
+		// Disable minification to preserve all comments
 		config.esbuild.minifyWhitespace = false
 		config.esbuild.minifyIdentifiers = false
 		config.esbuild.minifySyntax = false
@@ -118,7 +118,7 @@ export function applyGasViteConfig(
 }
 
 /**
- * 検出されたファイルをログ出力
+ * Log detected files
  */
 export function logDetectedFiles(entryFiles: Record<string, string>): void {
 	console.log(

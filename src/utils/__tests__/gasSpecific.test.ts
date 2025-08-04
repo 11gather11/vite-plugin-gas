@@ -29,7 +29,7 @@ describe('GAS-specific transformations', () => {
 				sampleCodeTransformations.multipleGasFunctions
 			)
 
-			// GAS特殊関数名が保護コメント付きで保持されていることを確認
+			// Verify that GAS special function names are preserved with protection comments
 			expect(result).toContain('/* @preserve onEdit */ function onEdit(')
 			expect(result).toContain('/* @preserve onOpen */ function onOpen(')
 			expect(result).toContain('/* @preserve doGet */ function doGet(')

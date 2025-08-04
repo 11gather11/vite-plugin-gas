@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-08-04
+
+### ✨ New Features
+- **TypeScript Comment Preservation**: Comprehensive support for preserving comments during compilation
+  - Preserves JSDoc comments (`/** ... */`)
+  - Preserves line comments (`// ...`)
+  - Preserves block comments (`/* ... */`)
+  - Configurable via `preserveComments` option (default: `false`)
+
+### ⚙️ New Configuration Options
+- `preserveComments` (boolean, default: `false`): Preserve comments in TypeScript to JavaScript compilation
+
+### 🔧 Technical Improvements
+- **Enhanced esbuild Configuration**: Configures esbuild to preserve comments when enabled
+- **Comprehensive Comment Support**: Works with all existing transformations (logger, GAS functions, module removal)
+- **Backward Compatible**: Existing functionality unchanged when option is disabled
+
+### 🧪 Testing & Quality
+- **Extended Test Coverage**: 90 tests with 93.73% coverage (exceeds 90% requirement)
+- **Comment Preservation Tests**: Comprehensive tests for all comment types and transformation scenarios
+- **Enhanced CI/CD**: Improved test coverage exclusions for example files
+
+### 📖 Documentation
+- **Updated README**: Added comprehensive documentation for comment preservation feature
+- **Usage Examples**: Detailed examples showing input/output transformation with comments
+- **Sample Files**: Added example files demonstrating comment preservation functionality
+
 ## [0.2.0] - 2025-08-04
 
 ### 🛤️ Major Features

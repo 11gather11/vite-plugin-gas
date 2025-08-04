@@ -39,7 +39,7 @@ describe('vite-config', () => {
 		applyGasViteConfig(config, entryFiles, outputDir, options)
 
 		expect(config.esbuild).toBeDefined()
-		// biome-ignore lint/suspicious/noExplicitAny: テスト用の型アサーション
+		// biome-ignore lint/suspicious/noExplicitAny: Type assertion for testing purposes
 		const esbuildOptions = config.esbuild as any
 		expect(esbuildOptions?.legalComments).toBe('inline')
 		expect(esbuildOptions?.minifyWhitespace).toBe(false)
@@ -60,7 +60,7 @@ describe('vite-config', () => {
 		applyGasViteConfig(config, entryFiles, outputDir, options)
 
 		expect(config.esbuild).toBeDefined()
-		// biome-ignore lint/suspicious/noExplicitAny: テスト用の型アサーション
+		// biome-ignore lint/suspicious/noExplicitAny: Type assertion for testing purposes
 		const esbuildOptions = config.esbuild as any
 		expect(esbuildOptions?.legalComments).toBeUndefined()
 		expect(esbuildOptions?.minifyWhitespace).toBeUndefined()
@@ -83,8 +83,8 @@ describe('vite-config', () => {
 
 		applyGasViteConfig(config, entryFiles, outputDir, DEFAULT_OPTIONS)
 
-		expect(config.build?.sourcemap).toBe(false) // GAS用にソースマップは無効化される
-		expect(config.build?.rollupOptions?.external).toEqual(expect.any(Function)) // 関数形式で外部依存を内部化
+		expect(config.build?.sourcemap).toBe(false) // Sourcemap is disabled for GAS
+		expect(config.build?.rollupOptions?.external).toEqual(expect.any(Function)) // External dependencies are internalized using function form
 		expect(config.build?.rollupOptions?.input).toEqual(entryFiles)
 	})
 
@@ -100,7 +100,7 @@ describe('vite-config', () => {
 	})
 
 	it('should log detected files correctly', () => {
-		// console.log をモック
+		// Mock console.log
 		const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
 		const entryFiles = {
@@ -179,8 +179,8 @@ describe('vite-config', () => {
 		applyGasViteConfig(config, entryFiles, outputDir, DEFAULT_OPTIONS)
 
 		const aliases = config.resolve?.alias as Record<string, string>
-		expect(aliases['@custom']).toBe('./custom') // 既存設定は保持
-		expect(aliases['@']).toBeDefined() // 新しい設定は追加
+		expect(aliases['@custom']).toBe('./custom') // Existing settings are preserved
+		expect(aliases['@']).toBeDefined() // New settings are added
 	})
 
 	it('should disable path aliases when option is false', () => {
@@ -191,7 +191,7 @@ describe('vite-config', () => {
 
 		applyGasViteConfig(config, entryFiles, outputDir, options)
 
-		// パスエイリアスが設定されていないことを確認
+		// Verify that path aliases are not set
 		expect(config.resolve?.alias).toBeUndefined()
 	})
 
@@ -208,7 +208,7 @@ describe('vite-config', () => {
 		applyGasViteConfig(config, entryFiles, outputDir, options)
 
 		const aliases = config.resolve?.alias as Record<string, string>
-		expect(aliases['@']).toBeDefined() // デフォルト設定は適用される
-		expect(aliases['~']).toBeDefined() // デフォルト設定は適用される
+		expect(aliases['@']).toBeDefined() // Default settings are applied
+		expect(aliases['~']).toBeDefined() // Default settings are applied
 	})
 })

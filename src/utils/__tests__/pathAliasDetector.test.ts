@@ -8,7 +8,7 @@ import {
 	detectPathAliasesFromTsConfig,
 } from '../pathAliasDetector'
 
-// ファイルシステムをモック
+// Mock file system
 vi.mock('node:fs', () => ({
 	readFileSync: vi.fn(),
 	existsSync: vi.fn(),
@@ -85,8 +85,8 @@ describe('pathAliasDetector', () => {
 				compilerOptions: {
 					baseUrl: 'src',
 					paths: {
-						'@/*': ['*'], // src/* になる
-						'@lib/*': ['lib/*'], // src/lib/* になる
+						'@/*': ['*'], // becomes src/*
+						'@lib/*': ['lib/*'], // becomes src/lib/*
 					},
 				},
 			})
@@ -146,7 +146,7 @@ describe('pathAliasDetector', () => {
 			const fs = await import('node:fs')
 			const mockExistsSync = vi.mocked(fs.existsSync)
 
-			// src ディレクトリが存在する場合
+			// When src directory exists
 			mockExistsSync.mockImplementation((path: PathLike) => {
 				return path.toString().includes('src')
 			})
@@ -161,10 +161,10 @@ describe('pathAliasDetector', () => {
 			const fs = await import('node:fs')
 			const mockExistsSync = vi.mocked(fs.existsSync)
 
-			// app ディレクトリのみ存在する場合
+			// When only app directory exists
 			mockExistsSync.mockImplementation((path: PathLike) => {
 				const pathStr = path.toString()
-				// srcを含むパスは存在しない、appを含むパスは存在する
+				// Paths containing src don't exist, paths containing app do exist
 				if (pathStr.includes('src')) return false
 				return pathStr.includes('app')
 			})
@@ -181,7 +181,7 @@ describe('pathAliasDetector', () => {
 			const { readFileSync } = await import('node:fs')
 			const mockReadFileSync = vi.mocked(readFileSync)
 
-			// tsconfig.jsonから@エイリアスを検出
+			// Detect @ alias from tsconfig.json
 			const mockTsConfig = JSON.stringify({
 				compilerOptions: {
 					paths: {
@@ -192,7 +192,7 @@ describe('pathAliasDetector', () => {
 
 			mockReadFileSync.mockReturnValue(mockTsConfig)
 
-			// Vite設定から~エイリアスを検出
+			// Detect ~ alias from Vite config
 			const viteConfig = {
 				resolve: {
 					alias: {
@@ -206,8 +206,8 @@ describe('pathAliasDetector', () => {
 			const result = autoDetectPathAliases(process.cwd(), viteConfig)
 
 			expect(result).toEqual({
-				'~': './app', // Vite設定から
-				'@': './src', // tsconfig.jsonから
+				'~': './app', // From Vite config
+				'@': './src', // From tsconfig.json
 			})
 
 			expect(consoleSpy).toHaveBeenCalledWith(
@@ -223,12 +223,12 @@ describe('pathAliasDetector', () => {
 			const mockReadFileSync = vi.mocked(readFileSync)
 			const mockExistsSync = vi.mocked(existsSync)
 
-			// tsconfig.jsonが存在しない
+			// tsconfig.json does not exist
 			mockReadFileSync.mockImplementation(() => {
 				throw new Error('File not found')
 			})
 
-			// src ディレクトリが存在
+			// src directory exists
 			mockExistsSync.mockImplementation((path: PathLike) => {
 				return path.toString().includes('src')
 			})
@@ -240,7 +240,7 @@ describe('pathAliasDetector', () => {
 
 			const result = autoDetectPathAliases()
 
-			// 共通パターンからのフォールバック
+			// Fallback from common patterns
 			expect(result['@']).toBe('./src')
 
 			consoleSpy.mockRestore()

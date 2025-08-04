@@ -1,13 +1,13 @@
 /**
- * 共通テストユーティリティ
- * 型アサーション(as)を使わないクリーンなテストヘルパー
+ * Common test utilities
+ * Clean test helpers without type assertions (as)
  */
 
 import type { Plugin } from 'vite'
 import type { GasPluginOptions } from '../../types'
 
 /**
- * プラグインインスタンスの型安全な検証
+ * Type-safe validation for plugin instances
  */
 export function validatePluginInstance(plugin: unknown): plugin is Plugin {
 	return (
@@ -19,7 +19,7 @@ export function validatePluginInstance(plugin: unknown): plugin is Plugin {
 }
 
 /**
- * プラグインの必須プロパティを検証
+ * Validate required properties of the plugin
  */
 export function validatePluginProperties(plugin: Plugin) {
 	const errors: string[] = []
@@ -28,7 +28,7 @@ export function validatePluginProperties(plugin: Plugin) {
 		errors.push('Plugin name is required')
 	}
 
-	// buildStartは必須ではない（configやtransformがあれば十分）
+	// buildStart is not required (config or transform is sufficient)
 	const hasHooks =
 		plugin.config ||
 		plugin.transform ||
@@ -43,17 +43,17 @@ export function validatePluginProperties(plugin: Plugin) {
 }
 
 /**
- * プラグインのtransformフックを安全に抽出
+ * Safely extract the transform hook from the plugin
  */
 export function extractTransformHook(plugin: Plugin) {
 	if (!plugin.transform) return null
 
-	// transform がオブジェクト形式の場合
+	// When transform is in object format
 	if (typeof plugin.transform === 'object' && 'handler' in plugin.transform) {
 		return plugin.transform.handler
 	}
 
-	// transform が関数の場合
+	// When transform is a function
 	if (typeof plugin.transform === 'function') {
 		return plugin.transform
 	}
@@ -62,7 +62,7 @@ export function extractTransformHook(plugin: Plugin) {
 }
 
 /**
- * 設定オプションのデフォルト値を検証
+ * Validate default values of configuration options
  */
 export function validateDefaultOptions(options: GasPluginOptions) {
 	const expected = {
@@ -91,7 +91,7 @@ export function validateDefaultOptions(options: GasPluginOptions) {
 }
 
 /**
- * ファイル内容の変換を検証
+ * Validate file content transformation
  */
 export function validateTransformation(
 	input: string,
@@ -134,7 +134,7 @@ export function validateTransformation(
 }
 
 /**
- * 非同期処理のテストヘルパー
+ * Test helper for async processing
  */
 export async function safeAsyncTest<T>(
 	testFn: () => Promise<T>,

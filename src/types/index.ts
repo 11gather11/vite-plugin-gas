@@ -1,72 +1,72 @@
 /**
- * GAS Plugin設定オプション
+ * GAS Plugin configuration options
  */
 export interface GasPluginOptions {
 	/**
-	 * TypeScriptファイルを自動検出するかどうか
+	 * Whether to automatically detect TypeScript files
 	 * @default true
 	 */
 	autoDetect?: boolean
 
 	/**
-	 * TypeScriptファイルを検索するディレクトリ
+	 * Directories to search for TypeScript files
 	 * @default ['src']
 	 */
 	include?: string[]
 
 	/**
-	 * 除外するファイルパターン
+	 * File patterns to exclude
 	 * @default ['**\/*.d.ts', '**\/*.test.ts', '**\/*.spec.ts']
 	 */
 	exclude?: string[]
 
 	/**
-	 * 出力ディレクトリ
+	 * Output directory
 	 * @default 'dist'
 	 */
 	outDir?: string
 
 	/**
-	 * console.logをLogger.logに変換するかどうか
+	 * Whether to transform console.log to Logger.log
 	 * @default true
 	 */
 	transformLogger?: boolean
 
 	/**
-	 * TypeScriptからJavaScriptに変換時にコメントを保持するかどうか
+	 * Whether to preserve comments when converting from TypeScript to JavaScript
 	 * @default true
 	 */
 	preserveComments?: boolean
 
 	/**
-	 * appsscript.jsonを出力ディレクトリにコピーするかどうか
+	 * Whether to copy appsscript.json to output directory
 	 * @default true
 	 */
 	copyAppsscriptJson?: boolean
 
 	/**
-	 * パスエイリアスの自動設定を有効にするかどうか
+	 * Whether to enable automatic path aliases configuration
 	 * @default true
 	 */
 	enablePathAliases?: boolean
 
 	/**
-	 * パスエイリアスの自動検知を有効にするかどうか
-	 * tsconfig.jsonやプロジェクト構造から自動的にパスエイリアスを検出します
+	 * Whether to enable automatic path alias detection
+	 * Automatically detects path aliases from tsconfig.json and project structure
 	 * @default true
 	 */
 	autoDetectPathAliases?: boolean
 
 	/**
-	 * カスタムパスエイリアス設定
-	 * 自動検知で見つからない場合のフォールバック設定
+	 * Custom path alias configuration
+	 * Fallback configuration when auto-detection doesn't find aliases
 	 * @default { '@': './src', '~': './src' }
 	 */
 	pathAliases?: Record<string, string>
 }
 
 /**
- * デフォルトオプション
+ * Default options
  */
 export const DEFAULT_OPTIONS: Required<GasPluginOptions> = {
 	autoDetect: true,

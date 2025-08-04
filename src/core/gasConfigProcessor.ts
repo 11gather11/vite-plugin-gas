@@ -5,7 +5,7 @@ import { detectTypeScriptFiles } from '../utils/fileDetector'
 import { applyGasViteConfig, logDetectedFiles } from '../utils/viteConfig'
 
 /**
- * プラグイン設定処理
+ * Plugin configuration processor
  */
 export class GasConfigProcessor {
 	private readonly mergedOptions: Required<GasPluginOptions>
@@ -15,17 +15,17 @@ export class GasConfigProcessor {
 	}
 
 	/**
-	 * Vite設定を処理
+	 * Process Vite configuration
 	 */
 	async processConfig(config: UserConfig): Promise<void> {
-		// TypeScriptサポートを自動で追加
+		// Automatically add TypeScript support
 		this.ensureTypeScriptSupport(config)
 
 		if (!this.mergedOptions.autoDetect) {
 			return
 		}
 
-		// TypeScriptファイルを自動検出
+		// Auto-detect TypeScript files
 		const entryFiles = await detectTypeScriptFiles(
 			this.mergedOptions.include,
 			this.mergedOptions.exclude
@@ -38,7 +38,7 @@ export class GasConfigProcessor {
 			return
 		}
 
-		// Vite設定を適用
+		// Apply Vite configuration
 		applyGasViteConfig(
 			config,
 			entryFiles,
@@ -46,25 +46,25 @@ export class GasConfigProcessor {
 			this.mergedOptions
 		)
 
-		// 検出したファイルをログ出力
+		// Log detected files
 		logDetectedFiles(entryFiles)
 	}
 
 	/**
-	 * TypeScriptサポートを確保
+	 * Ensure TypeScript support
 	 */
 	private ensureTypeScriptSupport(config: UserConfig): void {
-		// プラグインが設定されていない場合は初期化
+		// Initialize plugins if not configured
 		if (!config.plugins) {
 			config.plugins = []
 		}
 
-		// プラグイン配列に変換
+		// Convert to plugin array
 		const plugins = Array.isArray(config.plugins)
 			? config.plugins
 			: [config.plugins]
 
-		// TypeScript関連のプラグインが既に存在するかチェック
+		// Check if TypeScript-related plugins already exist
 		const hasTypeScriptPlugin = plugins.some((plugin) => {
 			if (!plugin || typeof plugin !== 'object') return false
 			const pluginName = 'name' in plugin ? plugin.name : ''
@@ -81,13 +81,13 @@ export class GasConfigProcessor {
 			)
 		}
 
-		// Viteの標準TypeScript設定を適用
+		// Apply Vite's standard TypeScript configuration
 		config.esbuild = config.esbuild || {}
 		config.esbuild.target = config.esbuild.target || 'es2017'
 	}
 
 	/**
-	 * オプションを取得
+	 * Get options
 	 */
 	get options(): Required<GasPluginOptions> {
 		return this.mergedOptions

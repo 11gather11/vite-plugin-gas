@@ -75,7 +75,7 @@ describe('gasPlugin', () => {
 	})
 
 	it('should export GasPluginOptions type', () => {
-		// 型のエクスポートが正しく行われていることを確認
+		// Verify that type exports are correctly performed
 		const options: GasPluginOptions = {
 			autoDetect: true,
 			include: ['src'],

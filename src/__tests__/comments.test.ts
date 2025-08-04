@@ -20,14 +20,14 @@ export function myFunction() {
 
 		const result = removeModuleStatements(input)
 
-		// コメントが保持されていることを確認
+		// Verify that comments are preserved
 		expect(result).toContain('/**')
 		expect(result).toContain('* This is a JSDoc comment')
 		expect(result).toContain('*/')
 		expect(result).toContain('// This is a line comment')
 		expect(result).toContain('/* This is a block comment */')
 
-		// import/export文は削除されていることを確認
+		// Verify that import/export statements are removed
 		expect(result).not.toContain('import')
 		expect(result).not.toContain('export')
 	})
@@ -45,14 +45,14 @@ function testFunction() {
 
 		const result = transformLogger(input)
 
-		// コメントが保持されていることを確認
+		// Verify that comments are preserved
 		expect(result).toContain('/**')
 		expect(result).toContain('* Logger transformation test')
 		expect(result).toContain('*/')
 		expect(result).toContain('// Use console.log for debugging')
 		expect(result).toContain('/* More detailed logging */')
 
-		// Logger変換が行われていることを確認
+		// Verify that Logger transformation occurred
 		expect(result).toContain('Logger.log')
 		expect(result).toContain('Logger.warn')
 	})
@@ -70,14 +70,14 @@ function onFormSubmit(e) {
 
 		const result = preserveGasFunctions(input)
 
-		// コメントが保持されていることを確認
+		// Verify that comments are preserved
 		expect(result).toContain('/**')
 		expect(result).toContain('* GAS function for handling form submissions')
 		expect(result).toContain('*/')
 		expect(result).toContain('// Process form data')
 		expect(result).toContain('/* Log the submission */')
 
-		// GAS関数保護コメントが追加されていることを確認
+		// Verify that GAS function protection comment was added
 		expect(result).toContain('/* @preserve onFormSubmit */')
 	})
 
@@ -109,7 +109,7 @@ export function complexFunction(param: string): void {
 		let result = removeModuleStatements(input)
 		result = transformLogger(result)
 
-		// すべてのコメントが保持されていることを確認
+		// Verify that all comments are preserved
 		expect(result).toContain('/**')
 		expect(result).toContain('Multi-line JSDoc')
 		expect(result).toContain('@param {string} param - Description')
@@ -121,7 +121,7 @@ export function complexFunction(param: string): void {
 		expect(result).toContain('with multiple lines')
 		expect(result).toContain('// End of function comment')
 
-		// 変換が正しく行われていることを確認
+		// Verify that transformations are applied correctly
 		expect(result).not.toContain('import')
 		expect(result).not.toContain('export')
 		expect(result).toContain('Logger.log')
