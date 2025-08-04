@@ -11,8 +11,8 @@ A Vite plugin for Google Apps Script development with TypeScript support.
 ## Features
 
 - 🚀 **Built-in TypeScript Support** - Uses Vite's native esbuild for TypeScript compilation (no external TypeScript plugin required)
-- �️ **Auto Path Alias Resolution** - Automatically detects and configures path aliases from tsconfig.json, Vite config, and common patterns
-- �🔄 **Module Statement Removal** - Automatically removes import/export statements unsupported by GAS
+- 🛤️ **Auto Path Alias Resolution** - Automatically detects and configures path aliases from tsconfig.json, Vite config, and common patterns
+- 🔄 **Module Statement Removal** - Automatically removes import/export statements unsupported by GAS
 - 🛡️ **GAS Function Protection** - Preserves special GAS functions (onEdit, onOpen, etc.) from optimization
 - ⚡ **Zero Configuration** - Works out-of-the-box with minimal setup
 - 🎯 **ES2017 Compatibility** - Optimized for Google Apps Script runtime
