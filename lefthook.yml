@@ -11,7 +11,7 @@ pre-commit:
       
     # Run type checking
     type-check:
-      run: pnpm exec tsc --noEmit
+      run: pnpm exec tsc --noEmit -p tsconfig.test.json
       glob: "*.{ts,tsx}"
 
 pre-push:
