@@ -1,5 +1,6 @@
 import type { UserConfig } from 'vite'
 import { describe, expect, it, vi } from 'vitest'
+import { DEFAULT_OPTIONS } from '../../types'
 import { applyGasViteConfig, logDetectedFiles } from '../viteConfig'
 
 describe('vite-config', () => {
@@ -11,7 +12,7 @@ describe('vite-config', () => {
 		}
 		const outputDir = 'dist'
 
-		applyGasViteConfig(config, entryFiles, outputDir)
+		applyGasViteConfig(config, entryFiles, outputDir, DEFAULT_OPTIONS)
 
 		expect(config.build).toBeDefined()
 		expect(config.build?.rollupOptions?.input).toEqual(entryFiles)
@@ -38,7 +39,7 @@ describe('vite-config', () => {
 		const entryFiles = { main: 'main.ts' }
 		const outputDir = 'build'
 
-		applyGasViteConfig(config, entryFiles, outputDir)
+		applyGasViteConfig(config, entryFiles, outputDir, DEFAULT_OPTIONS)
 
 		expect(config.build?.sourcemap).toBe(false) // GAS用にソースマップは無効化される
 		expect(config.build?.rollupOptions?.external).toEqual(expect.any(Function)) // 関数形式で外部依存を内部化
@@ -50,7 +51,7 @@ describe('vite-config', () => {
 		const entryFiles = {}
 		const outputDir = 'dist'
 
-		applyGasViteConfig(config, entryFiles, outputDir)
+		applyGasViteConfig(config, entryFiles, outputDir, DEFAULT_OPTIONS)
 
 		expect(config.build?.rollupOptions?.input).toEqual({})
 		expect(config.build?.outDir).toBe(outputDir)
@@ -98,7 +99,7 @@ describe('vite-config', () => {
 		}
 		const outputDir = 'dist'
 
-		applyGasViteConfig(config, entryFiles, outputDir)
+		applyGasViteConfig(config, entryFiles, outputDir, DEFAULT_OPTIONS)
 
 		// Empty files should still be processed normally
 		expect(config.build?.rollupOptions?.input).toEqual(entryFiles)
@@ -107,5 +108,65 @@ describe('vite-config', () => {
 			format: 'es',
 		})
 		expect(config.build?.outDir).toBe(outputDir)
+	})
+
+	it('should configure path aliases correctly', () => {
+		const config: UserConfig = {}
+		const entryFiles = { main: 'main.ts' }
+		const outputDir = 'dist'
+
+		applyGasViteConfig(config, entryFiles, outputDir, DEFAULT_OPTIONS)
+
+		expect(config.resolve?.alias).toBeDefined()
+		const aliases = config.resolve?.alias as Record<string, string>
+		expect(aliases['@']).toContain('src')
+		expect(aliases['~']).toContain('src')
+	})
+
+	it('should respect existing path aliases', () => {
+		const config: UserConfig = {
+			resolve: {
+				alias: {
+					'@custom': './custom',
+				},
+			},
+		}
+		const entryFiles = { main: 'main.ts' }
+		const outputDir = 'dist'
+
+		applyGasViteConfig(config, entryFiles, outputDir, DEFAULT_OPTIONS)
+
+		const aliases = config.resolve?.alias as Record<string, string>
+		expect(aliases['@custom']).toBe('./custom') // 既存設定は保持
+		expect(aliases['@']).toBeDefined() // 新しい設定は追加
+	})
+
+	it('should disable path aliases when option is false', () => {
+		const config: UserConfig = {}
+		const entryFiles = { main: 'main.ts' }
+		const outputDir = 'dist'
+		const options = { ...DEFAULT_OPTIONS, enablePathAliases: false }
+
+		applyGasViteConfig(config, entryFiles, outputDir, options)
+
+		// パスエイリアスが設定されていないことを確認
+		expect(config.resolve?.alias).toBeUndefined()
+	})
+
+	it('should disable auto-detection when option is false', () => {
+		const config: UserConfig = {}
+		const entryFiles = { main: 'main.ts' }
+		const outputDir = 'dist'
+		const options = {
+			...DEFAULT_OPTIONS,
+			enablePathAliases: true,
+			autoDetectPathAliases: false,
+		}
+
+		applyGasViteConfig(config, entryFiles, outputDir, options)
+
+		const aliases = config.resolve?.alias as Record<string, string>
+		expect(aliases['@']).toBeDefined() // デフォルト設定は適用される
+		expect(aliases['~']).toBeDefined() // デフォルト設定は適用される
 	})
 })

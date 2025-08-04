@@ -39,7 +39,12 @@ export class GasConfigProcessor {
 		}
 
 		// Vite設定を適用
-		applyGasViteConfig(config, entryFiles, this.mergedOptions.outDir)
+		applyGasViteConfig(
+			config,
+			entryFiles,
+			this.mergedOptions.outDir,
+			this.mergedOptions
+		)
 
 		// 検出したファイルをログ出力
 		logDetectedFiles(entryFiles)

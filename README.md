@@ -106,6 +106,8 @@ export default defineConfig({
 | `outDir` | `string` | `'dist'` | Output directory for compiled files |
 | `transformLogger` | `boolean` | `true` | Replace console.log with Logger.log for GAS |
 | `copyAppsscriptJson` | `boolean` | `true` | Automatically copy appsscript.json to output directory |
+| `enablePathAliases` | `boolean` | `true` | Enable automatic path aliases configuration |
+| `pathAliases` | `Record<string, string>` | `{ '@': './src', '~': './src' }` | Custom path aliases for module resolution |
 
 ## How It Works
 
@@ -161,6 +163,28 @@ export function doGet(): GoogleAppsScript.HTML.HtmlOutput {
 ❌ **Before**: You needed `@rollup/plugin-typescript` to resolve this
 ✅ **After**: This plugin now handles TypeScript compilation automatically
 
+**Path alias resolution errors (e.g., `@/module` not found)**
+
+✅ **Solution**: The plugin automatically configures common path aliases (`@` and `~` pointing to `./src`)
+```typescript
+// Automatically supported imports
+import { helper } from '@/utils/helper'
+import { config } from '~/config'
+```
+
+**Custom path aliases**
+
+✅ **Solution**: Configure custom aliases via plugin options
+```typescript
+gas({
+  pathAliases: {
+    '@': './src',
+    '@lib': './lib',
+    '@utils': './src/utils'
+  }
+})
+```
+
 **Missing imports after build**
 
 ✅ **Solution**: The plugin automatically bundles all dependencies into each output file
@@ -193,6 +217,50 @@ export default defineConfig({
     }
   }
 })
+```
+
+### Path Aliases Configuration
+
+The plugin automatically configures path aliases for cleaner imports:
+
+```typescript
+// Default configuration
+gas({
+  enablePathAliases: true,  // Enable automatic path aliases
+  pathAliases: {
+    '@': './src',           // @/utils/helper -> src/utils/helper
+    '~': './src'            // ~/config -> src/config
+  }
+})
+```
+
+**Custom aliases for complex projects:**
+
+```typescript
+gas({
+  pathAliases: {
+    '@': './src',
+    '@lib': './lib',
+    '@utils': './src/utils',
+    '@models': './src/models',
+    '@config': './config'
+  }
+})
+```
+
+**Usage in TypeScript files:**
+
+```typescript
+// src/main.ts
+import { processData } from '@utils/processor'
+import { UserModel } from '@models/user'
+import { API_CONFIG } from '@config/api'
+
+function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit) {
+  const userData = processData(e.range.getValue())
+  const user = new UserModel(userData)
+  // ... rest of your code
+}
 ```
 
 ### Working with Clasp

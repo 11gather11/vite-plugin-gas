@@ -86,7 +86,17 @@ describe('GasConfigProcessor', () => {
 			expect(applyGasViteConfig).toHaveBeenCalledWith(
 				config,
 				mockEntryFiles,
-				'dist'
+				'dist',
+				expect.objectContaining({
+					autoDetect: true,
+					include: ['src'],
+					exclude: ['**/*.d.ts', '**/*.test.ts', '**/*.spec.ts'],
+					outDir: 'dist',
+					transformLogger: true,
+					copyAppsscriptJson: true,
+					enablePathAliases: true,
+					pathAliases: { '@': './src', '~': './src' },
+				})
 			)
 			expect(logDetectedFiles).toHaveBeenCalledWith(mockEntryFiles)
 		})
@@ -145,7 +155,17 @@ describe('GasConfigProcessor', () => {
 			expect(applyGasViteConfig).toHaveBeenCalledWith(
 				config,
 				mockEntryFiles,
-				'build'
+				'build',
+				expect.objectContaining({
+					autoDetect: true,
+					include: ['src'],
+					exclude: ['**/*.d.ts', '**/*.test.ts', '**/*.spec.ts'],
+					outDir: 'build',
+					transformLogger: true,
+					copyAppsscriptJson: true,
+					enablePathAliases: true,
+					pathAliases: { '@': './src', '~': './src' },
+				})
 			)
 		})
 	})

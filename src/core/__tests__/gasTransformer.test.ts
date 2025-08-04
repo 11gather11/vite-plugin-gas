@@ -1,20 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import type { GasPluginOptions } from '../../types'
+import { DEFAULT_OPTIONS } from '../../types'
 import { GasTransformer } from '../gasTransformer'
 
 describe('GasTransformer', () => {
 	describe('transform', () => {
 		it('should transform JavaScript files only (post-compilation)', () => {
-			const options: Required<GasPluginOptions> = {
-				autoDetect: true,
-				include: ['src'],
-				exclude: [],
-				outDir: 'dist',
-				transformLogger: true,
-				copyAppsscriptJson: true,
-			}
-
-			const transformer = new GasTransformer(options)
+			// デフォルトオプションを使用
+			const transformer = new GasTransformer(DEFAULT_OPTIONS)
 
 			// JavaScriptファイルは変換される（TypeScriptから変換された後）
 			const jsResult = transformer.transform(
@@ -34,13 +27,9 @@ describe('GasTransformer', () => {
 		})
 
 		it('should remove import/export statements', () => {
-			const options: Required<GasPluginOptions> = {
-				autoDetect: true,
-				include: ['src'],
-				exclude: [],
-				outDir: 'dist',
+			// Logger変換を無効にしたオプション
+			const options: GasPluginOptions = {
 				transformLogger: false,
-				copyAppsscriptJson: true,
 			}
 
 			const transformer = new GasTransformer(options)
@@ -64,16 +53,8 @@ export default doGet
 		})
 
 		it('should transform logger when option is enabled', () => {
-			const options: Required<GasPluginOptions> = {
-				autoDetect: true,
-				include: ['src'],
-				exclude: [],
-				outDir: 'dist',
-				transformLogger: true,
-				copyAppsscriptJson: true,
-			}
-
-			const transformer = new GasTransformer(options)
+			// デフォルトオプション（transformLogger: true）を使用
+			const transformer = new GasTransformer(DEFAULT_OPTIONS)
 
 			const code = `
 function test() {
@@ -90,13 +71,9 @@ function test() {
 		})
 
 		it('should not transform logger when option is disabled', () => {
-			const options: Required<GasPluginOptions> = {
-				autoDetect: true,
-				include: ['src'],
-				exclude: [],
-				outDir: 'dist',
+			// Logger変換を無効にしたオプション
+			const options: GasPluginOptions = {
 				transformLogger: false,
-				copyAppsscriptJson: true,
 			}
 
 			const transformer = new GasTransformer(options)
@@ -116,16 +93,8 @@ function test() {
 
 	describe('generateBundle', () => {
 		it('should preserve GAS functions in JavaScript chunks', () => {
-			const options: Required<GasPluginOptions> = {
-				autoDetect: true,
-				include: ['src'],
-				exclude: [],
-				outDir: 'dist',
-				transformLogger: true,
-				copyAppsscriptJson: true,
-			}
-
-			const transformer = new GasTransformer(options)
+			// デフォルトオプションを使用
+			const transformer = new GasTransformer(DEFAULT_OPTIONS)
 
 			const mockBundle = {
 				'main.js': {
@@ -148,16 +117,8 @@ function test() {
 		})
 
 		it('should only process JavaScript files', () => {
-			const options: Required<GasPluginOptions> = {
-				autoDetect: true,
-				include: ['src'],
-				exclude: [],
-				outDir: 'dist',
-				transformLogger: true,
-				copyAppsscriptJson: true,
-			}
-
-			const transformer = new GasTransformer(options)
+			// デフォルトオプションを使用
+			const transformer = new GasTransformer(DEFAULT_OPTIONS)
 
 			const mockBundle = {
 				'main.ts': {

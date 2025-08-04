@@ -37,6 +37,26 @@ export interface GasPluginOptions {
 	 * @default true
 	 */
 	copyAppsscriptJson?: boolean
+
+	/**
+	 * パスエイリアスの自動設定を有効にするかどうか
+	 * @default true
+	 */
+	enablePathAliases?: boolean
+
+	/**
+	 * パスエイリアスの自動検知を有効にするかどうか
+	 * tsconfig.jsonやプロジェクト構造から自動的にパスエイリアスを検出します
+	 * @default true
+	 */
+	autoDetectPathAliases?: boolean
+
+	/**
+	 * カスタムパスエイリアス設定
+	 * 自動検知で見つからない場合のフォールバック設定
+	 * @default { '@': './src', '~': './src' }
+	 */
+	pathAliases?: Record<string, string>
 }
 
 /**
@@ -49,4 +69,7 @@ export const DEFAULT_OPTIONS: Required<GasPluginOptions> = {
 	outDir: 'dist',
 	transformLogger: true,
 	copyAppsscriptJson: true,
+	enablePathAliases: true,
+	autoDetectPathAliases: true,
+	pathAliases: { '@': './src', '~': './src' },
 }
