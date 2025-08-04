@@ -4,7 +4,7 @@ import { GasTransformer } from '../gasTransformer'
 
 describe('GasTransformer', () => {
 	describe('transform', () => {
-		it('should transform TypeScript files only', () => {
+		it('should transform JavaScript files only (post-compilation)', () => {
 			const options: Required<GasPluginOptions> = {
 				autoDetect: true,
 				include: ['src'],
@@ -16,21 +16,21 @@ describe('GasTransformer', () => {
 
 			const transformer = new GasTransformer(options)
 
-			// TypeScriptファイルは変換される
-			const tsResult = transformer.transform(
-				'import test from "module";\nfunction doGet() { console.log("test"); }',
-				'/src/test.ts'
-			)
-			expect(tsResult).not.toBeNull()
-			expect(tsResult?.code).not.toContain('import')
-			expect(tsResult?.code).toContain('Logger.log')
-
-			// TypeScript以外のファイルは変換されない
+			// JavaScriptファイルは変換される（TypeScriptから変換された後）
 			const jsResult = transformer.transform(
-				'function test() { console.log("test"); }',
+				'import test from "module";\nfunction doGet() { console.log("test"); }',
 				'/src/test.js'
 			)
-			expect(jsResult).toBeNull()
+			expect(jsResult).not.toBeNull()
+			expect(jsResult?.code).not.toContain('import')
+			expect(jsResult?.code).toContain('Logger.log')
+
+			// TypeScriptファイルは変換されない（Viteのesbuildが処理する）
+			const tsResult = transformer.transform(
+				'function test() { console.log("test"); }',
+				'/src/test.ts'
+			)
+			expect(tsResult).toBeNull()
 		})
 
 		it('should remove import/export statements', () => {
@@ -56,7 +56,7 @@ function doGet() {
 export default doGet
 			`.trim()
 
-			const result = transformer.transform(code, '/src/test.ts')
+			const result = transformer.transform(code, '/src/test.js')
 			expect(result).not.toBeNull()
 			expect(result?.code).not.toContain('import')
 			expect(result?.code).not.toContain('export')
@@ -82,7 +82,7 @@ function test() {
 }
 			`.trim()
 
-			const result = transformer.transform(code, '/src/test.ts')
+			const result = transformer.transform(code, '/src/test.js')
 			expect(result).not.toBeNull()
 			expect(result?.code).toContain('Logger.log')
 			expect(result?.code).toContain('Logger.warn')
@@ -107,7 +107,7 @@ function test() {
 }
 			`.trim()
 
-			const result = transformer.transform(code, '/src/test.ts')
+			const result = transformer.transform(code, '/src/test.js')
 			expect(result).not.toBeNull()
 			expect(result?.code).toContain('console.log')
 			expect(result?.code).not.toContain('Logger.log')

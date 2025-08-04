@@ -4,10 +4,10 @@ A Vite plugin for Google Apps Script development with TypeScript support.
 
 ## Features
 
-- 🚀 **Multiple File Support** - Handles multiple TypeScript files with individual compilation
+- 🚀 **Built-in TypeScript Support** - Uses Vite's native esbuild for TypeScript compilation (no external TypeScript plugin required)
 - 🔄 **Module Statement Removal** - Automatically removes import/export statements unsupported by GAS
 - 🛡️ **GAS Function Protection** - Preserves special GAS functions (onEdit, onOpen, etc.) from optimization
-- ⚡ **TypeScript Support** - Full TypeScript support with GAS API type definitions
+- ⚡ **Zero Configuration** - Works out-of-the-box with minimal setup
 - 🎯 **ES2017 Compatibility** - Optimized for Google Apps Script runtime
 - 📁 **Auto-Detection** - Automatically detects TypeScript files in specified directories
 - 🧹 **Smart File Filtering** - Automatically filters out empty files and comment-only files
@@ -26,9 +26,24 @@ yarn add vite-plugin-gas --dev
 
 ## Quick Start
 
-### ✨ Auto-Detection Mode (Recommended)
+### ✨ Simple Setup (Recommended)
 
-The simplest way to use the plugin. It automatically detects TypeScript files in your source directories:
+No need for additional TypeScript plugins! This plugin leverages Vite's built-in TypeScript support:
+
+```typescript
+// vite.config.ts
+import { defineConfig } from 'vite'
+import gas from 'vite-plugin-gas'
+
+export default defineConfig({
+  plugins: [
+    gas() // That's it! No additional TypeScript plugin needed
+  ]
+})
+```
+```
+
+### 🎯 Advanced Configuration
 
 ```typescript
 // vite.config.ts
@@ -42,26 +57,43 @@ export default defineConfig({
       include: ['src', 'lib'],
       exclude: ['**/*.test.ts', '**/*.spec.ts'],
       outDir: 'dist',
-      transformLogger: true
+      transformLogger: true,
+      copyAppsscriptJson: true
     })
   ]
 })
 ```
 
-### 📁 Project Structure Example
+### ❌ What NOT to do
 
+**Before** (with this plugin, you no longer need this):
+
+```typescript
+// DON'T DO THIS - No longer needed!
+import typescript from '@rollup/plugin-typescript'
+import { defineConfig } from 'vite'
+import gas from 'vite-plugin-gas'
+
+export default defineConfig({
+  plugins: [
+    typescript(), // ❌ Not needed - vite-plugin-gas handles TypeScript
+    gas(),
+  ],
+})
 ```
-📁 Project Structure:
-src/
-├── main.ts           # → dist/main.js
-├── utils/
-│   ├── helper.ts     # → dist/utils/helper.js
-│   └── common.ts     # → dist/utils/common.js
-├── triggers.ts       # → dist/triggers.js
-└── models/
-    └── user.ts       # → dist/models/user.js
-lib/
-    └── api.ts        # → dist/lib/api.js
+
+**After** (correct usage):
+
+```typescript
+// ✅ Simple and clean
+import { defineConfig } from 'vite'
+import gas from 'vite-plugin-gas'
+
+export default defineConfig({
+  plugins: [
+    gas(), // ✅ Handles TypeScript automatically
+  ],
+})
 ```
 
 ## Configuration Options
@@ -74,6 +106,68 @@ lib/
 | `outDir` | `string` | `'dist'` | Output directory for compiled files |
 | `transformLogger` | `boolean` | `true` | Replace console.log with Logger.log for GAS |
 | `copyAppsscriptJson` | `boolean` | `true` | Automatically copy appsscript.json to output directory |
+
+## How It Works
+
+### TypeScript Compilation Process
+
+1. **Vite's esbuild** compiles TypeScript to JavaScript
+2. **vite-plugin-gas** processes the JavaScript output:
+   - Removes import/export statements
+   - Transforms console.log to Logger.log (optional)
+   - Preserves GAS special functions
+   - Bundles dependencies
+
+### Example Transformation
+
+**Input (TypeScript):**
+```typescript
+// src/main.ts
+import { helper } from './utils/helper'
+
+export function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit) {
+  console.log('Edit detected')
+  helper.processEdit(e)
+}
+
+export function doGet(): GoogleAppsScript.HTML.HtmlOutput {
+  console.log('GET request received')
+  return HtmlService.createHtmlOutput('<h1>Hello GAS!</h1>')
+}
+```
+
+**Output (JavaScript for GAS):**
+```javascript
+// dist/main.js
+/* @preserve onEdit */ function onEdit(e) {
+  Logger.log('Edit detected')
+  helper.processEdit(e)
+}
+
+/* @preserve doGet */ function doGet() {
+  Logger.log('GET request received')
+  return HtmlService.createHtmlOutput('<h1>Hello GAS!</h1>')
+}
+
+// helper functions are bundled here...
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Error: "X is not exported by Y"**
+
+❌ **Before**: You needed `@rollup/plugin-typescript` to resolve this
+✅ **After**: This plugin now handles TypeScript compilation automatically
+
+**Missing imports after build**
+
+✅ **Solution**: The plugin automatically bundles all dependencies into each output file
+
+**GAS functions not working**
+
+✅ **Solution**: Special GAS functions (onEdit, onOpen, etc.) are automatically preserved with `@preserve` comments
 
 ## Advanced Usage
 

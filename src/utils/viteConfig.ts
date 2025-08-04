@@ -13,22 +13,23 @@ export function applyGasViteConfig(
 	config.build.rollupOptions = config.build.rollupOptions || {}
 	config.build.rollupOptions.input = entryFiles
 
-	// GAS用の設定：各ファイルを独立したESモジュールとして出力（後でimport/exportを削除）
+	// GAS用の設定：各ファイルを独立したチャンクとして出力
 	const outputOptions = {
 		...config.build.rollupOptions.output,
 		entryFileNames: '[name].js',
+		chunkFileNames: '[name].js',
 		format: 'es' as const, // ESモジュール形式で出力（変換処理でimport/exportを削除）
 	}
 
-	// manualChunksを明示的に削除してチャンク分割を無効化
-	if ('manualChunks' in outputOptions) {
+	// manualChunksを削除してチャンク分割を無効化
+	if (typeof outputOptions === 'object' && 'manualChunks' in outputOptions) {
 		delete outputOptions.manualChunks
 	}
 
 	config.build.rollupOptions.output = outputOptions
 
 	// 各エントリーファイルを独立して処理するための設定
-	config.build.rollupOptions.external = [] // 外部依存を内部化（すべてをバンドル）
+	config.build.rollupOptions.external = () => false // すべての依存関係を内部化
 	config.build.rollupOptions.treeshake = false // treeshakingを無効化してコードの削除を防ぐ
 	config.build.rollupOptions.preserveEntrySignatures = 'strict'
 
@@ -37,6 +38,12 @@ export function applyGasViteConfig(
 	config.build.outDir = outputDir
 	config.build.minify = false // minify無効化
 	config.build.target = 'es2017' // GAS対応のターゲット
+	config.build.sourcemap = false // ソースマップ無効化
+
+	// esbuildの設定（TypeScript変換）
+	config.esbuild = config.esbuild || {}
+	config.esbuild.target = 'es2017'
+	config.esbuild.format = 'esm'
 }
 
 /**

@@ -40,8 +40,8 @@ describe('vite-config', () => {
 
 		applyGasViteConfig(config, entryFiles, outputDir)
 
-		expect(config.build?.sourcemap).toBe(true)
-		expect(config.build?.rollupOptions?.external).toEqual([])
+		expect(config.build?.sourcemap).toBe(false) // GAS用にソースマップは無効化される
+		expect(config.build?.rollupOptions?.external).toEqual(expect.any(Function)) // 関数形式で外部依存を内部化
 		expect(config.build?.rollupOptions?.input).toEqual(entryFiles)
 	})
 

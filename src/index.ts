@@ -13,6 +13,8 @@ function gasPlugin(options: GasPluginOptions = {}): Plugin {
 
 	return {
 		name: 'vite-plugin-gas',
+		// TypeScriptプラグインより後に実行されるように順序を指定
+		enforce: 'post',
 
 		async config(config) {
 			await configProcessor.processConfig(config)

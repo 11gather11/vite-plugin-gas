@@ -17,11 +17,12 @@ export class GasTransformer {
 	}
 
 	/**
-	 * ファイルを変換する
+	 * ファイルを変換する（post-transformフック用）
 	 */
 	transform(code: string, id: string): TransformResult | null {
-		// .tsファイルのみ処理
-		if (!id.endsWith('.ts')) return null
+		// .jsファイル（TypeScriptから変換されたもの）のみ処理
+		// ViteのesbuildがTypeScript→JavaScriptの変換を既に完了している
+		if (!id.endsWith('.js') || id.includes('node_modules')) return null
 
 		let transformedCode = code
 
@@ -32,6 +33,9 @@ export class GasTransformer {
 		if (this.options.transformLogger) {
 			transformedCode = transformLogger(transformedCode)
 		}
+
+		// GAS特殊関数を保護
+		transformedCode = preserveGasFunctions(transformedCode)
 
 		return {
 			code: transformedCode,
@@ -58,7 +62,13 @@ export class GasTransformer {
 				fileName.endsWith('.js') &&
 				typeof chunk.code === 'string'
 			) {
+				// 追加のGAS固有の変換を適用
 				chunk.code = preserveGasFunctions(chunk.code)
+				chunk.code = removeModuleStatements(chunk.code)
+
+				if (this.options.transformLogger) {
+					chunk.code = transformLogger(chunk.code)
+				}
 			}
 		})
 	}

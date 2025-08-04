@@ -4,13 +4,39 @@
 export function removeModuleStatements(code: string): string {
 	let result = code
 
-	// import文の削除
-	result = result.replace(/import\s+.*?from\s+['"][^'"]*['"];?\s*/g, '')
+	// import文の削除（複数行に対応）
+	result = result.replace(
+		/import\s+(?:[^;]+\s+from\s+)?['"][^'"]*['"];?\s*/g,
+		''
+	)
 	result = result.replace(/import\s+['"][^'"]*['"];?\s*/g, '')
+	result = result.replace(
+		/import\s*\{[^}]*\}\s*from\s*['"][^'"]*['"];?\s*/g,
+		''
+	)
+	result = result.replace(
+		/import\s+\*\s+as\s+\w+\s+from\s*['"][^'"]*['"];?\s*/g,
+		''
+	)
+	result = result.replace(
+		/import\s+\w+\s*,\s*\{[^}]*\}\s*from\s*['"][^'"]*['"];?\s*/g,
+		''
+	)
 
-	// export文の削除（export default、export function等）
+	// export文の削除
 	result = result.replace(/export\s+default\s+/g, '')
-	result = result.replace(/export\s+/g, '')
+	result = result.replace(
+		/export\s+\{[^}]*\}\s*(from\s*['"][^'"]*['"])?\s*;?\s*/g,
+		''
+	)
+	result = result.replace(/export\s+\*\s+from\s*['"][^'"]*['"];?\s*/g, '')
+	result = result.replace(
+		/export\s+(?=(?:const|let|var|function|class|interface|type|enum))/g,
+		''
+	)
+
+	// 空行の整理
+	result = result.replace(/\n\s*\n\s*\n/g, '\n\n')
 
 	return result
 }
