@@ -2,6 +2,7 @@
  * GAS special functions that should be preserved during minification
  * Now with proper Google Apps Script type definitions!
  */
+/** biome-ignore-all lint/correctness/noUnusedVariables: These functions are GAS specific and should not be removed. */
 
 // GAS trigger functions
 function onEdit(event: GoogleAppsScript.Events.SheetsOnEdit) {
@@ -18,12 +19,12 @@ function onInstall() {
 }
 
 // Web app functions
-function doGet(request: GoogleAppsScript.Events.DoGet) {
+function doGet(_request: GoogleAppsScript.Events.DoGet) {
 	Logger.log('GET request received')
 	return HtmlService.createHtmlOutput('Hello World')
 }
 
-function doPost(request: GoogleAppsScript.Events.DoPost) {
+function doPost(_request: GoogleAppsScript.Events.DoPost) {
 	Logger.log('POST request received')
 	return ContentService.createTextOutput('Success')
 }
