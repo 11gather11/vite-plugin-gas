@@ -7,6 +7,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.17] - 2025-08-04
+
+### 🚀 Major Features
+- **Built-in TypeScript Support**: Completely eliminated the need for external TypeScript plugins
+  - Leverages Vite's native esbuild for TypeScript compilation
+  - Plugin now runs with `enforce: 'post'` to process JavaScript after TypeScript compilation
+  - Users no longer need to install or configure `@rollup/plugin-typescript`
+  - Automatic TypeScript support detection and configuration
+
+### 🔧 Technical Improvements
+- **Enhanced Transform Pipeline**: Switched from processing .ts files to .js files (post-compilation)
+  - Improved compatibility with Vite's built-in TypeScript handling
+  - Better integration with esbuild's TypeScript compilation
+  - More reliable code transformation results
+- **Advanced Import/Export Removal**: Implemented comprehensive regex patterns for module statement removal
+  - Handles complex import patterns including default imports, named imports, and namespace imports
+  - Improved export statement detection and removal
+  - Better preservation of function content during transformation
+- **Enhanced GAS Function Protection**: Improved preservation of Google Apps Script special functions
+  - Added `@preserve` comments for minification protection
+  - Better detection and handling of GAS trigger functions (onEdit, onOpen, etc.)
+  - Enhanced function signature preservation
+
+### 📝 Documentation & User Experience
+- **Comprehensive README Overhaul**: Complete rewrite with clear usage instructions
+  - Added "What NOT to do" section to prevent common configuration mistakes
+  - Detailed troubleshooting guide for common issues
+  - Clear migration instructions from external TypeScript plugins
+  - Enhanced configuration examples and best practices
+- **Better Error Messages**: Improved logging and error handling throughout the codebase
+  - More descriptive warning messages for configuration issues
+  - Better feedback for TypeScript support status
+  - Enhanced file detection and processing logs
+
+### 🧪 Code Quality & Testing
+- **100% Lint Compliance**: Resolved all Biome linting warnings
+  - Fixed `any` type usage with proper typed mock contexts
+  - Improved type safety across test files
+  - Enhanced code quality standards
+- **Comprehensive Test Coverage**: Maintained 62/62 passing tests
+  - Added new transform tests for post-compilation processing
+  - Enhanced integration tests for TypeScript workflow
+  - Improved mock contexts and test reliability
+- **Enhanced Build Configuration**: Improved Vite configuration for better GAS compatibility
+  - Better esbuild settings for ES2017 target
+  - Improved sourcemap and external dependency handling
+  - Enhanced rollup options for single-file output
+
+### 💥 Breaking Changes
+- **External TypeScript Plugin Removal**: Users must remove `@rollup/plugin-typescript` from their configuration
+  - Plugin now handles TypeScript compilation internally via Vite's esbuild
+  - Simplified plugin configuration - just add `gas()` plugin
+- **Transform Pipeline Change**: Plugin now processes JavaScript files instead of TypeScript files
+  - This change is internal and should not affect end users
+  - Improves compatibility with Vite's compilation process
+
+### 🔄 Migration Guide
+**Before (v0.1.16 and earlier):**
+```typescript
+import typescript from '@rollup/plugin-typescript'
+import gas from 'vite-plugin-gas'
+
+export default defineConfig({
+  plugins: [typescript(), gas()]
+})
+```
+
+**After (v0.1.17+):**
+```typescript
+import gas from 'vite-plugin-gas'
+
+export default defineConfig({
+  plugins: [gas()] // That's it!
+})
+```
+
 ## [0.1.16] - 2025-08-01
 
 ### 🚀 New Features
