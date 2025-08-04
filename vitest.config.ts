@@ -13,6 +13,7 @@ export default defineConfig({
 				'dist/',
 				'tests/',
 				'scripts/',
+				'examples/',
 				'**/*.d.ts',
 				'vitest.config.ts',
 				'**/__mocks__/**',
