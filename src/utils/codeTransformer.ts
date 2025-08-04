@@ -1,10 +1,10 @@
 /**
- * import/export文を削除する
+ * Remove import/export statements
  */
 export function removeModuleStatements(code: string): string {
 	let result = code
 
-	// import文の削除（複数行に対応）
+	// Remove import statements (supports multiple lines)
 	result = result.replace(
 		/import\s+(?:[^;]+\s+from\s+)?['"][^'"]*['"];?\s*/g,
 		''
@@ -23,7 +23,7 @@ export function removeModuleStatements(code: string): string {
 		''
 	)
 
-	// export文の削除
+	// Remove export statements
 	result = result.replace(/export\s+default\s+/g, '')
 	result = result.replace(
 		/export\s+\{[^}]*\}\s*(from\s*['"][^'"]*['"])?\s*;?\s*/g,
@@ -35,14 +35,14 @@ export function removeModuleStatements(code: string): string {
 		''
 	)
 
-	// 空行の整理
+	// Clean up empty lines
 	result = result.replace(/\n\s*\n\s*\n/g, '\n\n')
 
 	return result
 }
 
 /**
- * GAS特殊関数を保護する（minify対策）
+ * Preserve GAS special functions (anti-minify)
  */
 export function preserveGasFunctions(code: string): string {
 	const gasFunctions = [
@@ -57,7 +57,7 @@ export function preserveGasFunctions(code: string): string {
 
 	let result = code
 
-	// 関数名の保護コメントを追加
+	// Add preserve comments for function names
 	for (const funcName of gasFunctions) {
 		const regex = new RegExp(`function\\s+${funcName}\\s*\\(`, 'g')
 		result = result.replace(
@@ -70,7 +70,7 @@ export function preserveGasFunctions(code: string): string {
 }
 
 /**
- * console.log → Logger.log 変換
+ * Transform console.log → Logger.log
  */
 export function transformLogger(code: string): string {
 	return code

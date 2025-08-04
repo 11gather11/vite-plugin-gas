@@ -1,5 +1,5 @@
 /**
- * Utils モジュール用のテストフィクスチャ
+ * Test fixtures for Utils module
  */
 
 export const sampleTsConfig = {

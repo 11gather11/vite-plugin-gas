@@ -19,11 +19,11 @@ export default defineConfig({
 				'**/__mocks__/**',
 				'**/__fixtures__/**',
 			],
-			// 90%以上のカバレッジを強制
+			// Enforce 90%+ coverage
 			thresholds: {
 				statements: 90,
 				branches: 90,
-				functions: 80, // index.tsのプラグインフック関数でやや低めに調整
+				functions: 80, // Adjusted slightly lower for plugin hook functions in index.ts
 				lines: 90,
 			},
 		},

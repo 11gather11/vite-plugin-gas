@@ -7,7 +7,7 @@ import {
 	isEmpty,
 } from '../fileDetector'
 
-// readFileSyncとglobをモック
+// Mock readFileSync and glob
 vi.mock('node:fs', () => ({
 	readFileSync: vi.fn(),
 }))
@@ -21,24 +21,24 @@ describe('file-detector', () => {
 		const mockGlob = vi.mocked(glob)
 		const mockReadFileSync = vi.mocked(readFileSync)
 
-		// モックファイルリスト
+		// Mock file list
 		mockGlob.mockResolvedValueOnce([
 			'src/main.ts',
 			'src/empty.ts',
 			'src/utils/helper.ts',
 		])
 
-		// ファイル内容をモック
+		// Mock file contents
 		mockReadFileSync
-			.mockReturnValueOnce('console.log("main")') // main.ts - 内容あり
-			.mockReturnValueOnce('') // empty.ts - 空
-			.mockReturnValueOnce('export const helper = () => {}') // helper.ts - 内容あり
+			.mockReturnValueOnce('console.log("main")') // main.ts - has content
+			.mockReturnValueOnce('') // empty.ts - empty
+			.mockReturnValueOnce('export const helper = () => {}') // helper.ts - has content
 
 		const result = await detectTypeScriptFiles(['src'], ['**/*.test.ts'])
 
-		// 空のファイルはスキップされる
+		// Empty files are skipped
 		expect(Object.keys(result)).toHaveLength(2)
-		// 実際に生成されたキーをチェック
+		// Check the actually generated keys
 		const keys = Object.keys(result)
 		expect(keys).toContain('main')
 		expect(keys).toContain('utils_helper')
@@ -85,21 +85,21 @@ describe('file-detector', () => {
 	it('should check if file is empty correctly', () => {
 		const mockReadFileSync = vi.mocked(readFileSync)
 
-		// 空のファイル
+		// Empty file
 		mockReadFileSync.mockReturnValueOnce('')
 		expect(isEmpty('empty.ts')).toBe(true)
 
-		// コメントのみのファイル
+		// Comment-only file
 		mockReadFileSync.mockReturnValueOnce(
-			'// コメントのみ\n/* ブロックコメント */'
+			'// Comments only\n/* Block comment */'
 		)
 		expect(isEmpty('comment-only.ts')).toBe(true)
 
-		// 実際のコードがあるファイル
+		// File with actual code
 		mockReadFileSync.mockReturnValueOnce('const test = "value"')
 		expect(isEmpty('with-code.ts')).toBe(false)
 
-		// ファイル読み込みエラーの場合
+		// File read error case
 		mockReadFileSync.mockImplementationOnce(() => {
 			throw new Error('File not found')
 		})

@@ -4,12 +4,12 @@ import type { GasPluginOptions } from '../../types'
 import { customGasOptions, defaultGasOptions } from '../__fixtures__/sampleData'
 import { GasConfigProcessor } from '../gasConfigProcessor'
 
-// detectTypeScriptFilesをモック
+// Mock detectTypeScriptFiles
 vi.mock('../../utils/fileDetector', () => ({
 	detectTypeScriptFiles: vi.fn(),
 }))
 
-// vite-configのユーティリティをモック
+// Mock vite-config utilities
 vi.mock('../../utils/viteConfig', () => ({
 	applyGasViteConfig: vi.fn(),
 	logDetectedFiles: vi.fn(),
@@ -183,7 +183,7 @@ describe('GasConfigProcessor', () => {
 				'**/*.d.ts',
 				'**/*.test.ts',
 				'**/*.spec.ts',
-			]) // デフォルト
+			]) // Default
 		})
 	})
 })

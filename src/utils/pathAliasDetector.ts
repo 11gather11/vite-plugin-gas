@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import type { UserConfig } from 'vite'
 
 /**
- * tsconfig.jsonからパスエイリアスを自動検出
+ * Auto-detect path aliases from tsconfig.json
  */
 export function detectPathAliasesFromTsConfig(
 	rootDir: string = process.cwd()
@@ -14,35 +14,35 @@ export function detectPathAliasesFromTsConfig(
 		const tsconfigPath = resolve(rootDir, 'tsconfig.json')
 		const tsconfigContent = readFileSync(tsconfigPath, 'utf-8')
 
-		// JSONのコメントを削除してパース
+		// Remove JSON comments and parse
 		const jsonContent = tsconfigContent.replace(
 			/\/\*[\s\S]*?\*\/|\/\/.*$/gm,
 			''
 		)
 		const tsconfig = JSON.parse(jsonContent)
 
-		// compilerOptions.paths からパスマッピングを取得
+		// Get path mapping from compilerOptions.paths
 		const paths = tsconfig?.compilerOptions?.paths
 		if (paths && typeof paths === 'object') {
 			const baseUrl = tsconfig?.compilerOptions?.baseUrl || '.'
 
 			for (const [alias, pathArray] of Object.entries(paths)) {
 				if (Array.isArray(pathArray) && pathArray.length > 0) {
-					// TypeScriptのパス形式からVite形式に変換
+					// Convert from TypeScript path format to Vite format
 					const aliasKey = alias.replace('/*', '')
 					let aliasPath = pathArray[0]
 
-					// /*パターンを削除
+					// Remove '/*' pattern
 					if (aliasPath.endsWith('/*')) {
 						aliasPath = aliasPath.slice(0, -2)
 					}
 
-					// *のみの場合は空文字列にする
+					// Convert * only to empty string
 					if (aliasPath === '*') {
 						aliasPath = ''
 					}
 
-					// baseUrlを考慮したパス解決
+					// Path resolution considering baseUrl
 					if (!aliasPath.startsWith('/') && !aliasPath.startsWith('./')) {
 						if (baseUrl === '.') {
 							aliasPath = aliasPath ? `./${aliasPath}` : './'
@@ -52,11 +52,11 @@ export function detectPathAliasesFromTsConfig(
 								: `./${baseUrl}`
 						}
 					} else if (aliasPath === '') {
-						// 空のパスの場合はbaseUrlを使用
+						// Use baseUrl for empty paths
 						aliasPath = baseUrl === '.' ? './' : `./${baseUrl}`
 					}
 
-					// 相対パスに正規化
+					// Normalize to relative paths
 					if (aliasPath === '.') {
 						aliasPath = './'
 					} else if (
@@ -81,7 +81,7 @@ export function detectPathAliasesFromTsConfig(
 }
 
 /**
- * Viteの既存設定からパスエイリアスを検出
+ * Detect path aliases from existing Vite configuration
  */
 export function detectExistingPathAliases(
 	config: UserConfig
@@ -104,14 +104,14 @@ export function detectExistingPathAliases(
 }
 
 /**
- * 一般的なプロジェクト構造からパスエイリアスを推測
+ * Infer path aliases from common project structures
  */
 export function detectCommonPathAliases(
 	rootDir: string = process.cwd()
 ): Record<string, string> {
 	const aliases: Record<string, string> = {}
 
-	// 一般的なディレクトリ構造をチェック
+	// Check common directory structures
 	const commonPatterns = [
 		{ alias: '@', paths: ['src', 'app', 'lib'] },
 		{ alias: '~', paths: ['src', 'app'] },
@@ -134,7 +134,7 @@ export function detectCommonPathAliases(
 }
 
 /**
- * 統合的なパスエイリアス自動検出
+ * Comprehensive automatic path alias detection
  */
 export function autoDetectPathAliases(
 	rootDir: string = process.cwd(),
@@ -142,15 +142,15 @@ export function autoDetectPathAliases(
 ): Record<string, string> {
 	const aliases: Record<string, string> = {}
 
-	// 1. 既存のVite設定から検出
+	// 1. Detect from existing Vite configuration
 	if (viteConfig) {
 		Object.assign(aliases, detectExistingPathAliases(viteConfig))
 	}
 
-	// 2. tsconfig.jsonから検出
+	// 2. Detect from tsconfig.json
 	Object.assign(aliases, detectPathAliasesFromTsConfig(rootDir))
 
-	// 3. 一般的なパターンから推測（既存設定がない場合のみ）
+	// 3. Infer from common patterns (only when no existing configuration)
 	if (Object.keys(aliases).length === 0) {
 		Object.assign(aliases, detectCommonPathAliases(rootDir))
 	}

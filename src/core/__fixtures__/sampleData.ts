@@ -1,5 +1,5 @@
 /**
- * Core モジュール用のテストフィクスチャ
+ * Test fixtures for Core module
  */
 
 import type { GasPluginOptions } from '../../types'

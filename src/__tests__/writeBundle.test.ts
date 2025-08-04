@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import gasPlugin from '../index'
 
-// copyAppsscriptJsonのモック
+// Mock for copyAppsscriptJson
 vi.mock('../utils/appsscriptCopier', () => ({
 	copyAppsscriptJson: vi.fn(),
 }))
@@ -50,7 +50,7 @@ describe('gasPlugin - writeBundle Hook Tests', () => {
 			outDir: 'build',
 		})
 
-		// writeBundle関数を直接実行
+		// Execute writeBundle function directly
 		if (typeof plugin.writeBundle === 'function') {
 			plugin.writeBundle.call({} as never, {} as never, {} as never)
 		}
@@ -68,7 +68,7 @@ describe('gasPlugin - writeBundle Hook Tests', () => {
 			outDir: 'build',
 		})
 
-		// writeBundle関数を直接実行
+		// Execute writeBundle function directly
 		if (typeof plugin.writeBundle === 'function') {
 			plugin.writeBundle.call({} as never, {} as never, {} as never)
 		}
@@ -84,7 +84,7 @@ describe('gasPlugin - writeBundle Hook Tests', () => {
 			copyAppsscriptJson: true,
 		})
 
-		// writeBundle関数を直接実行
+		// Execute writeBundle function directly
 		if (typeof plugin.writeBundle === 'function') {
 			plugin.writeBundle.call({} as never, {} as never, {} as never)
 		}

@@ -2,13 +2,13 @@ import { copyFileSync, existsSync, mkdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
 /**
- * appsscript.jsonを出力ディレクトリにコピー
+ * Copy appsscript.json to output directory
  */
 export function copyAppsscriptJson(sourceDir: string, outputDir: string): void {
 	try {
 		const srcFile = resolve(sourceDir, 'appsscript.json')
 
-		// ソースファイルが存在するか確認
+		// Check if source file exists
 		if (!existsSync(srcFile)) {
 			console.warn(
 				'[vite-plugin-gas] appsscript.json not found in project root. Skipping copy.'
@@ -19,12 +19,12 @@ export function copyAppsscriptJson(sourceDir: string, outputDir: string): void {
 		const destDir = resolve(outputDir)
 		const destFile = join(destDir, 'appsscript.json')
 
-		// 出力ディレクトリが存在しない場合は作成
+		// Create output directory if it doesn't exist
 		if (!existsSync(destDir)) {
 			mkdirSync(destDir, { recursive: true })
 		}
 
-		// ファイルをコピー
+		// Copy file
 		copyFileSync(srcFile, destFile)
 		console.log(
 			'[vite-plugin-gas] appsscript.json has been copied to dist folder'

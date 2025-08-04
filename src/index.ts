@@ -5,7 +5,7 @@ import type { GasPluginOptions } from './types'
 import { copyAppsscriptJson } from './utils/appsscriptCopier'
 
 /**
- * Google Apps Script用のViteプラグイン
+ * Vite plugin for Google Apps Script
  */
 function gasPlugin(options: GasPluginOptions = {}): Plugin {
 	const configProcessor = new GasConfigProcessor(options)
@@ -13,7 +13,7 @@ function gasPlugin(options: GasPluginOptions = {}): Plugin {
 
 	return {
 		name: 'vite-plugin-gas',
-		// TypeScriptプラグインより後に実行されるように順序を指定
+		// Specify order to run after TypeScript plugin
 		enforce: 'post',
 
 		async config(config) {
@@ -25,13 +25,13 @@ function gasPlugin(options: GasPluginOptions = {}): Plugin {
 		},
 
 		generateBundle(_options, bundle) {
-			// Viteから渡されるbundleは適切な型を持っているので
-			// 型チェックはGasTransformer内で行う
+			// The bundle passed from Vite has proper types
+			// Type checking is performed within GasTransformer
 			transformer.generateBundle(bundle)
 		},
 
 		writeBundle() {
-			// appsscript.jsonをコピー
+			// Copy appsscript.json
 			if (configProcessor.options.copyAppsscriptJson) {
 				copyAppsscriptJson(
 					process.cwd(),
@@ -42,8 +42,8 @@ function gasPlugin(options: GasPluginOptions = {}): Plugin {
 	}
 }
 
-// デフォルトエクスポート
+// Default export
 export default gasPlugin
 
-// 型定義もエクスポート
+// Export type definitions as well
 export type { GasPluginOptions } from './types'

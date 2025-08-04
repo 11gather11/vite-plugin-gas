@@ -1,6 +1,6 @@
 /**
  * TypeScript Configuration Mocks
- * pathAliasDetector.test.tsで使用されるtsconfig.jsonのモックデータ
+ * Mock data for tsconfig.json used in pathAliasDetector.test.ts
  */
 
 export const validTsConfigWithPaths = {
@@ -25,9 +25,9 @@ export const tsConfigWithInvalidPaths = {
 	compilerOptions: {
 		baseUrl: '.',
 		paths: {
-			// 無効なパス定義
-			'@': ['src'], // 配列だが正しい形式
-			invalid: 'not-array', // 配列ではない
+			// Invalid path definitions
+			'@': ['src'], // Array but correct format
+			invalid: 'not-array', // Not an array
 		},
 	},
 }
@@ -41,7 +41,7 @@ export const tsConfigWithoutBaseUrl = {
 }
 
 /**
- * よく使用されるtsconfig.jsonパターン
+ * Commonly used tsconfig.json patterns
  */
 export const commonTsConfigs = {
 	minimal: tsConfigWithoutPaths,

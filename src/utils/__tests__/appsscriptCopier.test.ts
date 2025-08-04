@@ -2,7 +2,7 @@ import * as fs from 'node:fs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { copyAppsscriptJson } from '../appsscriptCopier'
 
-// ファイルシステムをモック
+// Mock file system
 vi.mock('node:fs', () => ({
 	existsSync: vi.fn(),
 	mkdirSync: vi.fn(),
@@ -14,7 +14,7 @@ describe('appsscriptCopier', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks()
-		// console.log/warn/error をモック
+		// Mock console.log/warn/error
 		vi.spyOn(console, 'log').mockImplementation(() => {})
 		vi.spyOn(console, 'warn').mockImplementation(() => {})
 		vi.spyOn(console, 'error').mockImplementation(() => {})
@@ -26,7 +26,7 @@ describe('appsscriptCopier', () => {
 	})
 
 	it('should copy appsscript.json when it exists', () => {
-		// appsscript.jsonが存在し、出力ディレクトリも存在する場合
+		// When appsscript.json exists and output directory also exists
 		mockFs.existsSync.mockImplementation((path) => {
 			const pathStr = path.toString()
 			return pathStr.includes('appsscript.json') || pathStr.includes('dist')
@@ -41,7 +41,7 @@ describe('appsscriptCopier', () => {
 	})
 
 	it('should create output directory if it does not exist', () => {
-		// appsscript.jsonは存在するが、出力ディレクトリが存在しない場合
+		// When appsscript.json exists but output directory does not exist
 		mockFs.existsSync.mockImplementation((path) => {
 			const pathStr = path.toString()
 			if (pathStr.includes('appsscript.json')) return true
@@ -59,7 +59,7 @@ describe('appsscriptCopier', () => {
 	})
 
 	it('should warn when appsscript.json does not exist', () => {
-		// appsscript.jsonが存在しない場合
+		// When appsscript.json does not exist
 		mockFs.existsSync.mockReturnValue(false)
 
 		copyAppsscriptJson('/project', 'dist')
@@ -71,7 +71,7 @@ describe('appsscriptCopier', () => {
 	})
 
 	it('should handle copy errors gracefully', () => {
-		// ファイルコピー時にエラーが発生する場合
+		// When an error occurs during file copy
 		mockFs.existsSync.mockReturnValue(true)
 		mockFs.copyFileSync.mockImplementation(() => {
 			throw new Error('Permission denied')
@@ -86,7 +86,7 @@ describe('appsscriptCopier', () => {
 	})
 
 	it('should handle directory creation errors gracefully', () => {
-		// ディレクトリ作成時にエラーが発生する場合
+		// When an error occurs during directory creation
 		mockFs.existsSync.mockImplementation((path) => {
 			const pathStr = path.toString()
 			if (pathStr.includes('appsscript.json')) return true

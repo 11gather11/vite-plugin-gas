@@ -6,10 +6,10 @@ import { GasTransformer } from '../gasTransformer'
 describe('GasTransformer', () => {
 	describe('transform', () => {
 		it('should transform JavaScript files only (post-compilation)', () => {
-			// デフォルトオプションを使用
+			// Use default options
 			const transformer = new GasTransformer(DEFAULT_OPTIONS)
 
-			// JavaScriptファイルは変換される（TypeScriptから変換された後）
+			// JavaScript files are transformed (after conversion from TypeScript)
 			const jsResult = transformer.transform(
 				'import test from "module";\nfunction doGet() { console.log("test"); }',
 				'/src/test.js'
@@ -18,7 +18,7 @@ describe('GasTransformer', () => {
 			expect(jsResult?.code).not.toContain('import')
 			expect(jsResult?.code).toContain('Logger.log')
 
-			// TypeScriptファイルは変換されない（Viteのesbuildが処理する）
+			// TypeScript files are not transformed (processed by Vite's esbuild)
 			const tsResult = transformer.transform(
 				'function test() { console.log("test"); }',
 				'/src/test.ts'
@@ -27,7 +27,7 @@ describe('GasTransformer', () => {
 		})
 
 		it('should remove import/export statements', () => {
-			// Logger変換を無効にしたオプション
+			// Options with logger transformation disabled
 			const options: GasPluginOptions = {
 				transformLogger: false,
 			}
@@ -53,7 +53,7 @@ export default doGet
 		})
 
 		it('should transform logger when option is enabled', () => {
-			// デフォルトオプション（transformLogger: true）を使用
+			// Use default options (transformLogger: true)
 			const transformer = new GasTransformer(DEFAULT_OPTIONS)
 
 			const code = `
@@ -71,7 +71,7 @@ function test() {
 		})
 
 		it('should not transform logger when option is disabled', () => {
-			// Logger変換を無効にしたオプション
+			// Options with logger transformation disabled
 			const options: GasPluginOptions = {
 				transformLogger: false,
 			}
@@ -93,7 +93,7 @@ function test() {
 
 	describe('generateBundle', () => {
 		it('should preserve GAS functions in JavaScript chunks', () => {
-			// デフォルトオプションを使用
+			// Use default options
 			const transformer = new GasTransformer(DEFAULT_OPTIONS)
 
 			const mockBundle = {
@@ -107,22 +107,22 @@ function test() {
 				},
 			}
 
-			// generateBundleを実行
+			// Execute generateBundle
 			transformer.generateBundle(mockBundle)
 
-			// JavaScriptチャンクのコードが処理されることを確認
+			// Verify that JavaScript chunk code is processed
 			expect(mockBundle['main.js'].code).toContain('function doGet()')
-			// アセットファイルは処理されない
+			// Asset files are not processed
 			expect(mockBundle['styles.css'].code).toBeUndefined()
 		})
 
 		it('should only process JavaScript files', () => {
-			// デフォルトオプションを使用
+			// Use default options
 			const transformer = new GasTransformer(DEFAULT_OPTIONS)
 
 			const mockBundle = {
 				'main.ts': {
-					// .jsではない
+					// Not .js
 					type: 'chunk',
 					code: 'function doGet() { return "test"; }',
 				},
@@ -136,7 +136,7 @@ function test() {
 
 			transformer.generateBundle(mockBundle)
 
-			// .jsファイルのみ処理される
+			// Only .js files are processed
 			expect(mockBundle['main.ts'].code).toBe(originalTsCode)
 			expect(mockBundle['main.js'].code).toContain('function doPost()')
 		})
