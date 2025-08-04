@@ -34,8 +34,8 @@ jobs:
         run: |
           echo "🔍 Checking Zero Warning Policy compliance..."
           
-          # TypeScript check
-          if ! pnpm tsc --noEmit; then
+          # TypeScript check (including tests)
+          if ! pnpm type-check:all; then
             echo "❌ TypeScript warnings found"
             exit 1
           fi
@@ -70,14 +70,9 @@ jobs:
           
           echo "✅ Build successful"
 
-      - name: Test Execution
+      - name: Test and Coverage Analysis
         run: |
-          echo "🧪 Running test suite..."
-          pnpm test
-
-      - name: Coverage Analysis
-        run: |
-          echo "📊 Analyzing test coverage..."
+          echo "🧪 Running tests with coverage analysis..."
           pnpm test:coverage
           
           # Validate coverage threshold

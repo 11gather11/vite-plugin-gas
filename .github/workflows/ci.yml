@@ -52,10 +52,7 @@ jobs:
         run: pnpm build
 
       - name: Type check
-        run: pnpm type-check
-
-      - name: Run tests
-        run: pnpm test
+        run: pnpm type-check:all
 
       - name: Test coverage
         run: pnpm test:coverage

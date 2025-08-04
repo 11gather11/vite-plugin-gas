@@ -1,11 +1,18 @@
 # vite-plugin-gas
 
+[![npm version](https://badge.fury.io/js/vite-plugin-gas.svg)](https://badge.fury.io/js/vite-plugin-gas)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-Plugin-646CFF.svg)](https://vitejs.dev/)
+[![Google Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-Compatible-34A853.svg)](https://developers.google.com/apps-script)
+
 A Vite plugin for Google Apps Script development with TypeScript support.
 
 ## Features
 
 - 🚀 **Built-in TypeScript Support** - Uses Vite's native esbuild for TypeScript compilation (no external TypeScript plugin required)
-- 🔄 **Module Statement Removal** - Automatically removes import/export statements unsupported by GAS
+- �️ **Auto Path Alias Resolution** - Automatically detects and configures path aliases from tsconfig.json, Vite config, and common patterns
+- �🔄 **Module Statement Removal** - Automatically removes import/export statements unsupported by GAS
 - 🛡️ **GAS Function Protection** - Preserves special GAS functions (onEdit, onOpen, etc.) from optimization
 - ⚡ **Zero Configuration** - Works out-of-the-box with minimal setup
 - 🎯 **ES2017 Compatibility** - Optimized for Google Apps Script runtime
@@ -53,14 +60,27 @@ import gas from 'vite-plugin-gas'
 export default defineConfig({
   plugins: [
     gas({
+      // File detection
       autoDetect: true,
       include: ['src', 'lib'],
       exclude: ['**/*.test.ts', '**/*.spec.ts'],
       outDir: 'dist',
+      
+      // Code transformation
       transformLogger: true,
-      copyAppsscriptJson: true
+      copyAppsscriptJson: true,
+      
+      // Path aliases (auto-detected by default)
+      enablePathAliases: true,
+      autoDetectPathAliases: true,
+      pathAliases: {
+        '@': './src',
+        '@lib': './lib',
+        '~': './src'
+      }
     })
   ]
+})
 })
 ```
 
@@ -107,6 +127,7 @@ export default defineConfig({
 | `transformLogger` | `boolean` | `true` | Replace console.log with Logger.log for GAS |
 | `copyAppsscriptJson` | `boolean` | `true` | Automatically copy appsscript.json to output directory |
 | `enablePathAliases` | `boolean` | `true` | Enable automatic path aliases configuration |
+| `autoDetectPathAliases` | `boolean` | `true` | Auto-detect path aliases from tsconfig.json and project structure |
 | `pathAliases` | `Record<string, string>` | `{ '@': './src', '~': './src' }` | Custom path aliases for module resolution |
 
 ## How It Works
@@ -152,6 +173,75 @@ export function doGet(): GoogleAppsScript.HTML.HtmlOutput {
 }
 
 // helper functions are bundled here...
+```
+
+## 🛤️ Path Alias Auto-Detection
+
+The plugin automatically detects and configures path aliases to resolve module imports correctly. This eliminates the common "failed to resolve import" errors when using TypeScript path mapping.
+
+### Automatic Detection Sources
+
+1. **tsconfig.json paths**: Reads `compilerOptions.paths` and `compilerOptions.baseUrl`
+2. **Vite config aliases**: Detects existing `resolve.alias` configuration
+3. **Common patterns**: Falls back to standard patterns like `@` → `./src`
+
+### Example Configuration
+
+**tsconfig.json:**
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@lib/*": ["lib/*"],
+      "@utils/*": ["src/utils/*"]
+    }
+  }
+}
+```
+
+**Your code:**
+```typescript
+// src/main.ts
+import { helper } from '@/utils/helper'
+import { config } from '@lib/config'
+
+export function doGet() {
+  return helper.processRequest(config.apiKey)
+}
+```
+
+**Result:** ✅ Imports resolve correctly, no manual Vite alias configuration needed!
+
+### Manual Path Alias Configuration
+
+If auto-detection doesn't cover your use case, configure manually:
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  plugins: [
+    gas({
+      enablePathAliases: true,
+      autoDetectPathAliases: true, // Keep auto-detection enabled
+      pathAliases: {
+        '@': './src',
+        '@lib': './lib',
+        '@shared': './shared',
+        '~': './src' // Alternative alias
+      }
+    })
+  ]
+})
+```
+
+### Disabling Path Aliases
+
+```typescript
+gas({
+  enablePathAliases: false // Completely disable path alias handling
+})
 ```
 
 ## Troubleshooting

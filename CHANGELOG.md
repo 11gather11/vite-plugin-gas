@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.18] - 2025-08-04
+
+### 🛤️ Major Features
+- **Automatic Path Alias Resolution**: Complete solution for TypeScript path mapping issues
+  - Auto-detects path aliases from `tsconfig.json` (`compilerOptions.paths` and `baseUrl`)
+  - Reads existing Vite configuration aliases
+  - Falls back to common patterns (`@` → `./src`, `~` → `./src`)
+  - Eliminates "failed to resolve import" errors for path aliases like `@/module`
+
+### ⚙️ New Configuration Options
+- `enablePathAliases` (boolean, default: `true`): Enable/disable path alias handling
+- `autoDetectPathAliases` (boolean, default: `true`): Auto-detect from tsconfig.json and project structure
+- `pathAliases` (Record<string, string>): Custom path alias mappings
+
+### 🔧 Technical Improvements
+- **Enhanced Module Resolution**: Comprehensive path alias detection system
+- **Better TypeScript Integration**: Seamless integration with TypeScript path mapping
+- **Improved Error Handling**: Graceful fallbacks when configuration files are not found
+
+### 🧪 Testing
+- **Comprehensive Test Coverage**: 77 tests covering all functionality including new path alias features
+- **Mock-based Testing**: Robust testing of file system operations and configuration parsing
+
 ## [0.1.17] - 2025-08-04
 
 ### 🚀 Major Features
