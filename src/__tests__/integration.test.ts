@@ -24,6 +24,10 @@ const createMockContext = () => ({
 	resolve: vi.fn(),
 	setAssetSource: vi.fn(),
 	warn: vi.fn(),
+	debug: vi.fn(),
+	info: vi.fn(),
+	fs: {} as Record<string, unknown>,
+	environment: {} as Record<string, unknown>,
 })
 
 describe('gasPlugin - Integration Tests', () => {

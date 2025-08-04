@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.18] - 2025-08-04
+## [0.2.0] - 2025-08-04
 
 ### 🛤️ Major Features
 - **Automatic Path Alias Resolution**: Complete solution for TypeScript path mapping issues
@@ -288,7 +288,14 @@ export default defineConfig({
 - ✅ Configurable logger replacement
 - ✅ Development and production build support
 
-[Unreleased]: https://github.com/11gather11/vite-plugin-gas/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/11gather11/vite-plugin-gas/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.2.0
+[0.1.18]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.1.18
+[0.1.17]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.1.17
+[0.1.16]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.1.16
+[0.1.15]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.1.15
+[0.1.10]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.1.10
+[0.1.0]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.1.0
 [0.0.5]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.5
 [0.0.4]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.4
 [0.0.3]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.0.3

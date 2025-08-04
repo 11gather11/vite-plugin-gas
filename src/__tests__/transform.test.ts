@@ -19,6 +19,10 @@ const createMockContext = () => ({
 	resolve: () => null,
 	setAssetSource: () => {},
 	warn: () => {},
+	debug: () => {},
+	info: () => {},
+	fs: {} as Record<string, unknown>,
+	environment: {} as Record<string, unknown>,
 })
 
 describe('gasPlugin - Transform Tests', () => {
@@ -82,7 +86,7 @@ export function onOpen() {
 					testCase.id
 				)
 				expect(result).toBeDefined()
-				if (result) {
+				if (result && typeof result === 'object' && 'code' in result) {
 					const normalizedResult = result.code?.trim().replace(/\s+/g, ' ')
 					const normalizedExpected = testCase.expected
 						.trim()

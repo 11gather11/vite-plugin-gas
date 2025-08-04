@@ -1,9 +1,32 @@
 {
-	"extends": "./tsconfig.json",
 	"include": ["src/**/*"],
 	"exclude": ["node_modules", "dist"],
 	"compilerOptions": {
+		/* Language and Environment */
+		"target": "ES2022",
+		"lib": ["ES2022", "DOM"],
+		"moduleDetection": "force",
+
+		/* Modules */
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+
+		/* Emit */
 		"noEmit": true,
+
+		/* Interop Constraints */
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+
+		/* Type Checking - テスト用に緩和 */
+		"strict": false,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+
+		/* Completeness */
 		"skipLibCheck": true,
 		"types": ["vitest/globals", "node"]
 	}

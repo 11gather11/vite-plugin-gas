@@ -52,7 +52,7 @@ describe('gasPlugin - writeBundle Hook Tests', () => {
 
 		// writeBundle関数を直接実行
 		if (typeof plugin.writeBundle === 'function') {
-			plugin.writeBundle.call({} as never, {}, {})
+			plugin.writeBundle.call({} as never, {} as never, {} as never)
 		}
 
 		expect(mockCopyAppsscriptJson).toHaveBeenCalledTimes(1)
@@ -70,7 +70,7 @@ describe('gasPlugin - writeBundle Hook Tests', () => {
 
 		// writeBundle関数を直接実行
 		if (typeof plugin.writeBundle === 'function') {
-			plugin.writeBundle.call({} as never, {}, {})
+			plugin.writeBundle.call({} as never, {} as never, {} as never)
 		}
 
 		expect(mockCopyAppsscriptJson).not.toHaveBeenCalled()
@@ -86,7 +86,7 @@ describe('gasPlugin - writeBundle Hook Tests', () => {
 
 		// writeBundle関数を直接実行
 		if (typeof plugin.writeBundle === 'function') {
-			plugin.writeBundle.call({} as never, {}, {})
+			plugin.writeBundle.call({} as never, {} as never, {} as never)
 		}
 
 		expect(mockCopyAppsscriptJson).toHaveBeenCalledWith(process.cwd(), 'dist')
