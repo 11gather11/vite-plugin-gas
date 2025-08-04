@@ -105,6 +105,16 @@ export function applyGasViteConfig(
 	config.esbuild = config.esbuild || {}
 	config.esbuild.target = 'es2017'
 	config.esbuild.format = 'esm'
+	config.esbuild.keepNames = true // 関数名を保持
+
+	// コメント保持設定
+	if (options?.preserveComments) {
+		config.esbuild.legalComments = 'inline' // 法的コメントを保持
+		// すべてのコメントを保持するため、minificationを無効化
+		config.esbuild.minifyWhitespace = false
+		config.esbuild.minifyIdentifiers = false
+		config.esbuild.minifySyntax = false
+	}
 }
 
 /**
