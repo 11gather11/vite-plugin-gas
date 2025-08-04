@@ -1,5 +1,6 @@
 import type { PathLike } from 'node:fs'
 import { describe, expect, it, vi } from 'vitest'
+import { sampleTsConfig } from '../__fixtures__/sampleData'
 import {
 	autoDetectPathAliases,
 	detectCommonPathAliases,
@@ -19,18 +20,7 @@ describe('pathAliasDetector', () => {
 			const { readFileSync } = await import('node:fs')
 			const mockReadFileSync = vi.mocked(readFileSync)
 
-			const mockTsConfig = JSON.stringify({
-				compilerOptions: {
-					baseUrl: '.',
-					paths: {
-						'@/*': ['src/*'],
-						'@components/*': ['src/components/*'],
-						'@utils/*': ['src/utils/*'],
-					},
-				},
-			})
-
-			mockReadFileSync.mockReturnValue(mockTsConfig)
+			mockReadFileSync.mockReturnValue(JSON.stringify(sampleTsConfig))
 
 			const result = detectPathAliasesFromTsConfig()
 
@@ -38,6 +28,7 @@ describe('pathAliasDetector', () => {
 				'@': './src',
 				'@components': './src/components',
 				'@utils': './src/utils',
+				'~': './src',
 			})
 		})
 

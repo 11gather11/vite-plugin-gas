@@ -1,6 +1,7 @@
 import type { UserConfig } from 'vite'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { GasPluginOptions } from '../../types'
+import { customGasOptions, defaultGasOptions } from '../__fixtures__/sampleData'
 import { GasConfigProcessor } from '../gasConfigProcessor'
 
 // detectTypeScriptFilesをモック
@@ -26,38 +27,34 @@ describe('GasConfigProcessor', () => {
 
 	describe('constructor', () => {
 		it('should merge options with defaults', () => {
-			const options: GasPluginOptions = {
-				autoDetect: false,
-				transformLogger: false,
-			}
-
-			const processor = new GasConfigProcessor(options)
+			const processor = new GasConfigProcessor(customGasOptions)
 
 			expect(processor.options.autoDetect).toBe(false)
 			expect(processor.options.transformLogger).toBe(false)
-			expect(processor.options.include).toEqual(['src']) // デフォルト値
-			expect(processor.options.outDir).toBe('dist') // デフォルト値
+			expect(processor.options.include).toEqual(['lib', 'app'])
+			expect(processor.options.outDir).toBe('build')
 		})
 
 		it('should use default options when no options provided', () => {
 			const processor = new GasConfigProcessor()
 
-			expect(processor.options.autoDetect).toBe(true)
-			expect(processor.options.include).toEqual(['src'])
+			expect(processor.options.autoDetect).toBe(defaultGasOptions.autoDetect)
+			expect(processor.options.include).toEqual(defaultGasOptions.include)
 			expect(processor.options.exclude).toEqual([
 				'**/*.d.ts',
 				'**/*.test.ts',
 				'**/*.spec.ts',
 			])
-			expect(processor.options.outDir).toBe('dist')
-			expect(processor.options.transformLogger).toBe(true)
+			expect(processor.options.outDir).toBe(defaultGasOptions.outDir)
+			expect(processor.options.transformLogger).toBe(
+				defaultGasOptions.transformLogger
+			)
 		})
 	})
 
 	describe('processConfig', () => {
 		it('should skip processing when autoDetect is disabled', async () => {
-			const options: GasPluginOptions = { autoDetect: false }
-			const processor = new GasConfigProcessor(options)
+			const processor = new GasConfigProcessor({ autoDetect: false })
 			const config: UserConfig = {}
 
 			await processor.processConfig(config)

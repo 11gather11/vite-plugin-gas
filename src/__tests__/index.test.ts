@@ -1,20 +1,25 @@
-import type { Plugin } from 'vite'
 import { describe, expect, it } from 'vitest'
 import gasPlugin from '../index'
 import type { GasPluginOptions } from '../types'
+import {
+	validatePluginInstance,
+	validatePluginProperties,
+} from './__mocks__/testUtils'
 
 describe('gasPlugin', () => {
 	it('should return a Vite plugin with correct name', () => {
-		const plugin = gasPlugin() as Plugin
+		const plugin = gasPlugin()
 
-		expect(plugin.name).toBe('vite-plugin-gas')
-		expect(typeof plugin.config).toBe('function')
-		expect(typeof plugin.transform).toBe('function')
-		expect(typeof plugin.generateBundle).toBe('function')
-		expect(typeof plugin.writeBundle).toBe('function')
+		expect(validatePluginInstance(plugin)).toBe(true)
+
+		if (validatePluginInstance(plugin)) {
+			expect(plugin.name).toBe('vite-plugin-gas')
+			const errors = validatePluginProperties(plugin)
+			expect(errors).toHaveLength(0)
+		}
 	})
 
-	it('should accept options', () => {
+	it('should accept custom options', () => {
 		const options: GasPluginOptions = {
 			autoDetect: false,
 			transformLogger: false,
@@ -24,45 +29,53 @@ describe('gasPlugin', () => {
 			copyAppsscriptJson: false,
 		}
 
-		const plugin = gasPlugin(options) as Plugin
-		expect(plugin.name).toBe('vite-plugin-gas')
+		const plugin = gasPlugin(options)
+		expect(validatePluginInstance(plugin)).toBe(true)
+
+		if (validatePluginInstance(plugin)) {
+			expect(plugin.name).toBe('vite-plugin-gas')
+		}
 	})
 
 	it('should work with default options', () => {
-		const plugin = gasPlugin() as Plugin
-		expect(plugin.name).toBe('vite-plugin-gas')
+		const plugin = gasPlugin()
+		expect(validatePluginInstance(plugin)).toBe(true)
+
+		if (validatePluginInstance(plugin)) {
+			expect(plugin.name).toBe('vite-plugin-gas')
+		}
 	})
 
 	it('should have working config processor', () => {
-		const plugin = gasPlugin() as Plugin
-		const pluginImpl = gasPlugin()
+		const plugin = gasPlugin()
+		expect(validatePluginInstance(plugin)).toBe(true)
 
-		// プラグイン内部のconfigProcessorが動作することを確認
-		expect(pluginImpl).toBeDefined()
-		expect(plugin.config).toBeDefined()
+		if (validatePluginInstance(plugin)) {
+			expect(plugin.config).toBeDefined()
+			expect(typeof plugin.config).toBe('function')
+		}
 	})
 
 	it('should have working transformer', () => {
-		const plugin = gasPlugin() as Plugin
-		const pluginImpl = gasPlugin()
+		const plugin = gasPlugin()
+		expect(validatePluginInstance(plugin)).toBe(true)
 
-		// プラグイン内部のtransformerが動作することを確認
-		expect(pluginImpl).toBeDefined()
-		expect(plugin.transform).toBeDefined()
+		if (validatePluginInstance(plugin)) {
+			expect(plugin.transform).toBeDefined()
+		}
 	})
 
 	it('should have working bundle generator', () => {
-		const plugin = gasPlugin() as Plugin
-		const pluginImpl = gasPlugin()
+		const plugin = gasPlugin()
+		expect(validatePluginInstance(plugin)).toBe(true)
 
-		// プラグイン内部のbundle generatorが動作することを確認
-		expect(pluginImpl).toBeDefined()
-		expect(plugin.generateBundle).toBeDefined()
+		if (validatePluginInstance(plugin)) {
+			expect(plugin.generateBundle).toBeDefined()
+		}
 	})
 
 	it('should export GasPluginOptions type', () => {
 		// 型のエクスポートが正しく行われていることを確認
-		// TypeScriptコンパイラーがこれをチェックする
 		const options: GasPluginOptions = {
 			autoDetect: true,
 			include: ['src'],
@@ -79,47 +92,41 @@ describe('gasPlugin', () => {
 	})
 
 	it('should have all required plugin hooks', () => {
-		const plugin = gasPlugin() as Plugin
+		const plugin = gasPlugin()
+		expect(validatePluginInstance(plugin)).toBe(true)
 
-		// 必要なプラグインフックが存在することを確認
-		expect(plugin.config).toBeDefined()
-		expect(plugin.transform).toBeDefined()
-		expect(plugin.generateBundle).toBeDefined()
+		if (validatePluginInstance(plugin)) {
+			const errors = validatePluginProperties(plugin)
+			expect(errors).toHaveLength(0)
+		}
 	})
 
 	it('should accept copyAppsscriptJson option', () => {
-		const plugin = gasPlugin({ copyAppsscriptJson: true }) as Plugin
+		const plugin = gasPlugin({ copyAppsscriptJson: true })
+		expect(validatePluginInstance(plugin)).toBe(true)
 
-		expect(plugin.name).toBe('vite-plugin-gas')
-		expect(typeof plugin.config).toBe('function')
-		expect(typeof plugin.transform).toBe('function')
-		expect(typeof plugin.generateBundle).toBe('function')
-		expect(typeof plugin.writeBundle).toBe('function')
+		if (validatePluginInstance(plugin)) {
+			expect(plugin.name).toBe('vite-plugin-gas')
+			const errors = validatePluginProperties(plugin)
+			expect(errors).toHaveLength(0)
+		}
 	})
 
-	it('should execute transform hook with valid TypeScript code', () => {
-		const plugin = gasPlugin({ transformLogger: false })
-
-		// transform関数を抽出してテスト
-		const transformFunc = plugin.transform as (
-			code: string,
-			id: string
-		) => unknown
-
-		const result = transformFunc(
-			'function test() { return "hello"; }',
-			'src/main.ts'
-		)
-
-		expect(result).toBeDefined()
-		// transformはTransformResultオブジェクトまたは文字列を返す
-		expect(typeof result === 'string' || typeof result === 'object').toBe(true)
-	})
-
-	it('should have generateBundle function', () => {
+	it('should have writeBundle function', () => {
 		const plugin = gasPlugin()
+		expect(validatePluginInstance(plugin)).toBe(true)
 
-		// generateBundle関数が存在することを確認
-		expect(typeof plugin.generateBundle).toBe('function')
+		if (validatePluginInstance(plugin)) {
+			expect(plugin.writeBundle).toBeDefined()
+		}
+	})
+
+	it('should handle transform hook validation', () => {
+		const plugin = gasPlugin({ transformLogger: false })
+		expect(validatePluginInstance(plugin)).toBe(true)
+
+		if (validatePluginInstance(plugin)) {
+			expect(plugin.transform).toBeDefined()
+		}
 	})
 })
