@@ -1,29 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { createMockViteContext } from '../__mocks__/vite'
 import gasPlugin from '../index'
-
-// テスト用のモックコンテキスト
-const createMockContext = () => ({
-	addWatchFile: () => {},
-	cache: new Map(),
-	emitFile: () => '',
-	error: () => {},
-	getCombinedSourcemap: () => null,
-	getFileName: () => '',
-	getModuleIds: () => [],
-	getModuleInfo: () => null,
-	getWatchFiles: () => [],
-	load: () => null,
-	meta: { rollupVersion: '4.0.0', watchMode: false },
-	moduleIds: [][Symbol.iterator](),
-	parse: () => ({}),
-	resolve: () => null,
-	setAssetSource: () => {},
-	warn: () => {},
-	debug: () => {},
-	info: () => {},
-	fs: {} as Record<string, unknown>,
-	environment: {} as Record<string, unknown>,
-})
 
 describe('gasPlugin - Transform Tests', () => {
 	it('should transform JavaScript files (post-compilation) correctly', () => {
@@ -79,7 +56,7 @@ export function onOpen() {
 			// プラグインのtransform関数を呼び出し
 			const transformFunction = plugin.transform
 			if (typeof transformFunction === 'function') {
-				const mockContext = createMockContext()
+				const mockContext = createMockViteContext()
 				const result = transformFunction.call(
 					mockContext,
 					testCase.input,
@@ -110,7 +87,7 @@ export function main() {
 
 		const transformFunction = plugin.transform
 		if (typeof transformFunction === 'function') {
-			const mockContext = createMockContext()
+			const mockContext = createMockViteContext()
 			const result = transformFunction.call(mockContext, tsCode, 'src/main.ts')
 			// TypeScriptファイルは変換しない（nullを返す）
 			expect(result).toBe(null)
@@ -129,7 +106,7 @@ export function external() {
 
 		const transformFunction = plugin.transform
 		if (typeof transformFunction === 'function') {
-			const mockContext = createMockContext()
+			const mockContext = createMockViteContext()
 			const result = transformFunction.call(
 				mockContext,
 				jsCode,
