@@ -61,7 +61,11 @@ export async function detectTypeScriptFiles(
  * Generate entry name from file path
  */
 export function generateEntryName(filePath: string, baseDir: string): string {
-	const relativePath = relative(baseDir, filePath)
+	// Resolve both paths to ensure consistent behavior across platforms
+	const resolvedFilePath = resolve(filePath)
+	const resolvedBaseDir = resolve(baseDir)
+
+	const relativePath = relative(resolvedBaseDir, resolvedFilePath)
 	const parsed = parse(relativePath)
 
 	return parsed.dir
