@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2025-08-07
+
+### ✨ New Features
+- **Automatic Arrow Function Transformation**: Added GAS compatibility for arrow functions
+  - Arrow functions are now automatically converted to function declarations
+  - Uses esbuild's ES5 target for reliable transformation
+  - No additional configuration required - works out of the box
+  - Ensures compatibility with Google Apps Script runtime restrictions
+
+### 🔧 Technical Improvements  
+- **Enhanced Build Configuration**: Improved esbuild settings for GAS compatibility
+  - Set `esbuild.target` and `build.target` to `es5` for maximum compatibility
+  - Automatic transformation of modern JavaScript features to GAS-compatible code
+  - Better integration with Vite's native transformation pipeline
+
+### 📝 Code Examples
+```javascript
+// Before (TypeScript with arrow functions)
+const processData = (data) => {
+  return data.map(item => item * 2);
+};
+
+// After (GAS-compatible JavaScript)
+function processData(data) {
+  return data.map(function(item) {
+    return item * 2;
+  });
+}
+```
+
 ## [0.4.0] - 2025-08-07
 
 ### 💥 Breaking Changes

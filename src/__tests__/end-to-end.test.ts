@@ -176,13 +176,13 @@ function doPost(e: any) {
 			})
 			expect(config.build?.outDir).toBe(outputDir)
 			expect(config.build?.minify).toBe(false)
-			expect(config.build?.target).toBe('es2017')
+			expect(config.build?.target).toBe('es5')
 			expect(config.build?.rollupOptions?.treeshake).toBe(false)
 
 			// Verify esbuild configuration
 			expect(config.esbuild).toBeDefined()
 			if (config.esbuild) {
-				expect(config.esbuild.target).toBe('es2017')
+				expect(config.esbuild.target).toBe('es5')
 				expect(config.esbuild.format).toBe('esm')
 			}
 

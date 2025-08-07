@@ -99,12 +99,12 @@ export function applyGasViteConfig(
 	config.build.lib = false
 	config.build.outDir = outputDir
 	config.build.minify = false // Disable minification
-	config.build.target = 'es2017' // Target for GAS compatibility
+	config.build.target = 'es5' // Target for GAS compatibility (transforms arrow functions)
 	config.build.sourcemap = false // Disable sourcemap
 
 	// esbuild configuration (TypeScript transformation)
 	config.esbuild = config.esbuild || {}
-	config.esbuild.target = 'es2017'
+	config.esbuild.target = 'es5' // Transform arrow functions to function declarations
 	config.esbuild.format = 'esm'
 }
 

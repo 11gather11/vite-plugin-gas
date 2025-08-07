@@ -13,9 +13,10 @@ A Vite plugin for Google Apps Script development with TypeScript support.
 - 🚀 **Built-in TypeScript Support** - Uses Vite's native esbuild for TypeScript compilation (no external TypeScript plugin required)
 - 🛤️ **Auto Path Alias Resolution** - Automatically detects and configures path aliases from tsconfig.json, Vite config, and common patterns
 - 🔄 **Module Statement Removal** - Automatically removes import/export statements unsupported by GAS
+- ⚡ **Arrow Function Transformation** - Automatically converts arrow functions to function declarations for GAS compatibility
 - 🛡️ **GAS Function Protection** - Preserves special GAS functions (onEdit, onOpen, etc.) from optimization
 - ⚡ **Zero Configuration** - Works out-of-the-box with minimal setup
-- 🎯 **ES2017 Compatibility** - Optimized for Google Apps Script runtime
+- 🎯 **ES5 Compatibility** - Optimized for Google Apps Script runtime with automatic modern JS feature transformation
 - 📁 **Auto-Detection** - Automatically detects TypeScript files in specified directories
 - 🧹 **Smart File Filtering** - Automatically filters out empty files and comment-only files
 - 🔍 **console.log Transform** - Optionally transforms console.log to Logger.log for GAS compatibility
@@ -134,7 +135,9 @@ export default defineConfig({
 
 ### TypeScript Compilation Process
 
-1. **Vite's esbuild** compiles TypeScript to JavaScript
+1. **Vite's esbuild** compiles TypeScript to JavaScript with ES5 target for GAS compatibility
+   - Automatically transforms arrow functions to function declarations
+   - Converts modern JavaScript features to ES5-compatible code
 2. **vite-plugin-gas** processes the JavaScript output:
    - Removes import/export statements
    - Transforms console.log to Logger.log (optional)
@@ -148,6 +151,13 @@ export default defineConfig({
 // src/main.ts
 import { helper } from './utils/helper'
 
+// Arrow functions (automatically converted for GAS compatibility)
+const processData = (data: any[]) => {
+  return data.map(item => item * 2)
+}
+
+const greetUser = (name: string) => `Hello, ${name}!`
+
 /**
  * Handle spreadsheet edit events
  * @param {GoogleAppsScript.Events.SheetsOnEdit} e - Edit event
@@ -155,6 +165,7 @@ import { helper } from './utils/helper'
 export function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit) {
   // Log the edit event
   console.log('Edit detected')
+  const processed = processData([1, 2, 3])
   helper.processEdit(e)
 }
 
@@ -168,19 +179,31 @@ export function doGet(): GoogleAppsScript.HTML.HtmlOutput {
 ```javascript
 // dist/main.js
 
+// Arrow functions converted to function declarations
+function processData(data) {
+  return data.map(function(item) {
+    return item * 2;
+  });
+}
+
+function greetUser(name) {
+  return "Hello, " + name + "!";
+}
+
 /**
  * Handle spreadsheet edit events
  * @param {GoogleAppsScript.Events.SheetsOnEdit} e - Edit event
  */
 /* @preserve onEdit */ function onEdit(e) {
   // Log the edit event
-  Logger.log('Edit detected')
-  helper.processEdit(e)
+  Logger.log('Edit detected');
+  var processed = processData([1, 2, 3]);
+  helper.processEdit(e);
 }
 
 /* @preserve doGet */ function doGet() {
-  Logger.log('GET request received')
-  return HtmlService.createHtmlOutput('<h1>Hello GAS!</h1>')
+  Logger.log('GET request received');
+  return HtmlService.createHtmlOutput('<h1>Hello GAS!</h1>');
 }
 
 // helper functions are bundled here...
