@@ -1,6 +1,7 @@
 import { resolve } from 'node:path'
 import type { UserConfig } from 'vite'
 import type { GasPluginOptions } from '../types'
+import { logger } from './logger'
 import { autoDetectPathAliases } from './pathAliasDetector'
 
 /**
@@ -112,10 +113,12 @@ export function applyGasViteConfig(
  * Log detected files
  */
 export function logDetectedFiles(entryFiles: Record<string, string>): void {
-	console.log(
-		`[vite-plugin-gas] Auto-detected ${Object.keys(entryFiles).length} TypeScript files:`
-	)
-	Object.keys(entryFiles).forEach((name) => {
-		console.log(`  - ${name}: ${entryFiles[name]}`)
-	})
+	const count = Object.keys(entryFiles).length
+	logger.success(`Auto-detected ${count} TypeScript files`)
+
+	if (process.env.VERBOSE) {
+		Object.keys(entryFiles).forEach((name) => {
+			logger.verbose(`  - ${name}: ${entryFiles[name]}`)
+		})
+	}
 }

@@ -36,7 +36,7 @@ describe('appsscriptCopier', () => {
 
 		expect(mockFs.copyFileSync).toHaveBeenCalled()
 		expect(console.log).toHaveBeenCalledWith(
-			'[vite-plugin-gas] appsscript.json has been copied to dist folder'
+			'\x1b[32m[vite-plugin-gas]\x1b[0m \x1b[32m✅ appsscript.json has been copied to dist folder\x1b[0m'
 		)
 	})
 
@@ -65,9 +65,8 @@ describe('appsscriptCopier', () => {
 		copyAppsscriptJson('/project', 'dist')
 
 		expect(mockFs.copyFileSync).not.toHaveBeenCalled()
-		expect(console.warn).toHaveBeenCalledWith(
-			'[vite-plugin-gas] appsscript.json not found in project root. Skipping copy.'
-		)
+		// logger.debug() calls don't output in test environment (only in development/debug mode)
+		expect(console.warn).not.toHaveBeenCalled()
 	})
 
 	it('should handle copy errors gracefully', () => {
@@ -80,7 +79,7 @@ describe('appsscriptCopier', () => {
 		copyAppsscriptJson('/project', 'dist')
 
 		expect(console.error).toHaveBeenCalledWith(
-			'[vite-plugin-gas] Failed to copy appsscript.json:',
+			'\x1b[31m[vite-plugin-gas]\x1b[0m \x1b[31m❌ Failed to copy appsscript.json:\x1b[0m',
 			expect.any(Error)
 		)
 	})
@@ -101,7 +100,7 @@ describe('appsscriptCopier', () => {
 		copyAppsscriptJson('/project', 'dist')
 
 		expect(console.error).toHaveBeenCalledWith(
-			'[vite-plugin-gas] Failed to copy appsscript.json:',
+			'\x1b[31m[vite-plugin-gas]\x1b[0m \x1b[31m❌ Failed to copy appsscript.json:\x1b[0m',
 			expect.any(Error)
 		)
 	})

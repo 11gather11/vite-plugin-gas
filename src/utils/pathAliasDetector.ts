@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import type { UserConfig } from 'vite'
+import { logger } from './logger'
 
 /**
  * Auto-detect path aliases from tsconfig.json
@@ -71,10 +72,7 @@ export function detectPathAliasesFromTsConfig(
 			}
 		}
 	} catch (error) {
-		console.warn(
-			'[vite-plugin-gas] Could not read tsconfig.json for path aliases:',
-			error
-		)
+		logger.debug('Could not read tsconfig.json for path aliases:', error)
 	}
 
 	return aliases
@@ -94,10 +92,7 @@ export function detectExistingPathAliases(
 			Object.assign(aliases, existingAliases)
 		}
 	} catch (error) {
-		console.warn(
-			'[vite-plugin-gas] Could not detect existing path aliases:',
-			error
-		)
+		logger.debug('Could not detect existing path aliases:', error)
 	}
 
 	return aliases
@@ -155,7 +150,7 @@ export function autoDetectPathAliases(
 		Object.assign(aliases, detectCommonPathAliases(rootDir))
 	}
 
-	console.log('[vite-plugin-gas] Auto-detected path aliases:', aliases)
+	logger.info('Auto-detected path aliases:', aliases)
 
 	return aliases
 }

@@ -1,11 +1,30 @@
 import { rimraf } from 'rimraf'
 import { build } from 'tsup'
 
+// Simple colored logger for build script
+const colors = {
+	cyan: '\x1b[36m',
+	green: '\x1b[32m',
+	red: '\x1b[31m',
+	reset: '\x1b[0m',
+	dim: '\x1b[2m',
+}
+
+const log = {
+	info: (msg: string) =>
+		console.log(`${colors.cyan}[build]${colors.reset} ${msg}`),
+	success: (msg: string) =>
+		console.log(`${colors.green}[build]${colors.reset} ✅ ${msg}`),
+	error: (msg: string) =>
+		console.error(`${colors.red}[build]${colors.reset} ❌ ${msg}`),
+	dim: (msg: string) => console.log(`${colors.dim}${msg}${colors.reset}`),
+}
+
 async function buildProject() {
-	console.log('🧹 Cleaning dist directory...')
+	log.info('Cleaning dist directory...')
 	await rimraf('dist')
 
-	console.log('🏗️ Building project...')
+	log.info('Building project...')
 
 	await build({
 		entry: ['src/index.ts'],
@@ -25,17 +44,17 @@ async function buildProject() {
 		bundle: true,
 		// CommonJS用の型定義ファイルを生成
 		onSuccess: async () => {
-			console.log('✅ Build completed successfully!')
-			console.log('📄 Generated files:')
-			console.log('  - dist/index.js (ESM)')
-			console.log('  - dist/index.cjs (CJS)')
-			console.log('  - dist/index.d.ts (ESM types)')
-			console.log('  - dist/index.d.cts (CJS types)')
+			log.success('Build completed successfully!')
+			log.dim('Generated files:')
+			log.dim('  - dist/index.js (ESM)')
+			log.dim('  - dist/index.cjs (CJS)')
+			log.dim('  - dist/index.d.ts (ESM types)')
+			log.dim('  - dist/index.d.cts (CJS types)')
 		},
 	})
 }
 
 buildProject().catch((error) => {
-	console.error('❌ Build failed:', error)
+	log.error(`Build failed: ${error}`)
 	process.exit(1)
 })

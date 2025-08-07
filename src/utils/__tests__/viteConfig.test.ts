@@ -69,10 +69,9 @@ describe('vite-config', () => {
 		logDetectedFiles(entryFiles)
 
 		expect(consoleSpy).toHaveBeenCalledWith(
-			'[vite-plugin-gas] Auto-detected 2 TypeScript files:'
+			'\x1b[32m[vite-plugin-gas]\x1b[0m \x1b[32m✅ Auto-detected 2 TypeScript files\x1b[0m'
 		)
-		expect(consoleSpy).toHaveBeenCalledWith('  - src/main: src/main.ts')
-		expect(consoleSpy).toHaveBeenCalledWith('  - lib/config: lib/config.ts')
+		// Note: individual file listings are now logged with logger.verbose, which doesn't output in test environment
 
 		consoleSpy.mockRestore()
 	})
@@ -85,7 +84,7 @@ describe('vite-config', () => {
 		logDetectedFiles(entryFiles)
 
 		expect(consoleSpy).toHaveBeenCalledWith(
-			'[vite-plugin-gas] Auto-detected 0 TypeScript files:'
+			'\x1b[32m[vite-plugin-gas]\x1b[0m \x1b[32m✅ Auto-detected 0 TypeScript files\x1b[0m'
 		)
 
 		consoleSpy.mockRestore()

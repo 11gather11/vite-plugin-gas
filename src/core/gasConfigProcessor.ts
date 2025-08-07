@@ -2,6 +2,7 @@ import type { UserConfig } from 'vite'
 import type { GasPluginOptions } from '../types'
 import { DEFAULT_OPTIONS } from '../types'
 import { detectTypeScriptFiles } from '../utils/fileDetector'
+import { logger } from '../utils/logger'
 import { applyGasViteConfig, logDetectedFiles } from '../utils/viteConfig'
 
 /**
@@ -32,9 +33,7 @@ export class GasConfigProcessor {
 		)
 
 		if (Object.keys(entryFiles).length === 0) {
-			console.warn(
-				'[vite-plugin-gas] No TypeScript files found for auto-detection'
-			)
+			logger.warn('No TypeScript files found for auto-detection')
 			return
 		}
 
@@ -76,8 +75,8 @@ export class GasConfigProcessor {
 		})
 
 		if (!hasTypeScriptPlugin) {
-			console.log(
-				"[vite-plugin-gas] TypeScript support is handled by Vite's built-in esbuild integration"
+			logger.debug(
+				"TypeScript support is handled by Vite's built-in esbuild integration"
 			)
 		}
 

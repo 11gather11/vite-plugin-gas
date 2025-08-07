@@ -69,10 +69,8 @@ describe('pathAliasDetector', () => {
 			const result = detectPathAliasesFromTsConfig()
 
 			expect(result).toEqual({})
-			expect(consoleSpy).toHaveBeenCalledWith(
-				'[vite-plugin-gas] Could not read tsconfig.json for path aliases:',
-				expect.any(Error)
-			)
+			// logger.debug() calls don't output in test environment (only in development/debug mode)
+			expect(consoleSpy).not.toHaveBeenCalled()
 
 			consoleSpy.mockRestore()
 		})
@@ -211,8 +209,11 @@ describe('pathAliasDetector', () => {
 			})
 
 			expect(consoleSpy).toHaveBeenCalledWith(
-				'[vite-plugin-gas] Auto-detected path aliases:',
-				expect.any(Object)
+				'\x1b[36m[vite-plugin-gas]\x1b[0m Auto-detected path aliases:',
+				{
+					'~': './app',
+					'@': './src',
+				}
 			)
 
 			consoleSpy.mockRestore()

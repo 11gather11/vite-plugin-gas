@@ -109,7 +109,7 @@ describe('GasConfigProcessor', () => {
 			await processor.processConfig(config)
 
 			expect(consoleSpy).toHaveBeenCalledWith(
-				'[vite-plugin-gas] No TypeScript files found for auto-detection'
+				'\x1b[33m[vite-plugin-gas]\x1b[0m \x1b[33m⚠️  No TypeScript files found for auto-detection\x1b[0m'
 			)
 			expect(applyGasViteConfig).not.toHaveBeenCalled()
 			expect(logDetectedFiles).not.toHaveBeenCalled()

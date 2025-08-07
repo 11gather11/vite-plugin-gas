@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { parse, relative, resolve } from 'node:path'
 import { glob } from 'tinyglobby'
+import { logger } from './logger'
 
 /**
  * Check if file is empty or contains only whitespace
@@ -42,7 +43,7 @@ export async function detectTypeScriptFiles(
 		for (const file of files) {
 			// Skip empty files (including comment-only files)
 			if (isEmpty(file)) {
-				console.warn(`[vite-plugin-gas] Skipping empty file: ${file}`)
+				logger.verbose(`Skipping empty file: ${file}`)
 				continue
 			}
 
@@ -55,7 +56,7 @@ export async function detectTypeScriptFiles(
 
 		return entries
 	} catch (error) {
-		console.warn('[vite-plugin-gas] Failed to detect TypeScript files:', error)
+		logger.warn('Failed to detect TypeScript files:', error)
 		return {}
 	}
 }
