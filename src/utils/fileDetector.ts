@@ -46,7 +46,10 @@ export async function detectTypeScriptFiles(
 				continue
 			}
 
-			const entryName = generateEntryName(file, includeDirs[0] || 'src')
+			const entryName = generateEntryName(
+				file,
+				resolve(includeDirs[0] || 'src')
+			)
 			entries[entryName] = resolve(file)
 		}
 
