@@ -78,6 +78,25 @@ let func3 = () => {
 		expect(transformArrowFunctions(input)).toBe(input)
 	})
 
+	it('should not transform variable declarations with complex expressions', () => {
+		const input = `const lastNonEmptyCol =
+		rowData
+			.map((value, index) => ({ value, index: index + 1 }))
+			.reverse()
+			.find((cell) => cell.value !== '')?.index || 1`
+
+		const result = transformArrowFunctions(input)
+
+		// Should not transform this complex variable declaration
+		expect(result).toContain('const lastNonEmptyCol =')
+		expect(result).not.toContain('function lastNonEmptyCol(')
+
+		// Should preserve the arrow function in the map call
+		expect(result).toContain(
+			'.map((value, index) => ({ value, index: index + 1 }))'
+		)
+	})
+
 	it('should not transform method definitions', () => {
 		const input = 'const obj = { method: function(param) { return param; } }'
 		expect(transformArrowFunctions(input)).toBe(input)

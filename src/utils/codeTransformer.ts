@@ -5,38 +5,41 @@ export function transformArrowFunctions(code: string): string {
 	let result = code
 
 	// Transform export const functionName = (params) => { body }
+	// Only match patterns that are clearly arrow function assignments
 	result = result.replace(
 		/export\s+const\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*\{/g,
 		'export function $1($2) {'
 	)
 
 	// Transform const/let/var functionName = (params) => { body }
+	// Use more specific pattern to avoid matching complex expressions
 	result = result.replace(
-		/(?:const|let|var)\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*\{/g,
-		'function $1($2) {'
+		/^(\s*)(?:const|let|var)\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*\{/gm,
+		'$1function $2($3) {'
 	)
 
 	// Transform simple arrow functions: const func = (params) => expression
+	// Only match simple expressions, not complex method chains
 	result = result.replace(
-		/(?:const|let|var)\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*([^;{]+);?/g,
-		'function $1($2) { return $3; }'
+		/^(\s*)(?:const|let|var)\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*([^;{}\n]+);?\s*$/gm,
+		'$1function $2($3) { return $4; }'
 	)
 
 	// Transform export const func = (params) => expression
 	result = result.replace(
-		/export\s+(?:const|let|var)\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*([^;{]+);?/g,
-		'export function $1($2) { return $3; }'
+		/^(\s*)export\s+(?:const|let|var)\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*([^;{}\n]+);?\s*$/gm,
+		'$1export function $2($3) { return $4; }'
 	)
 
 	// Handle arrow functions with no parameters: () => {}
 	result = result.replace(
-		/(?:const|let|var)\s+(\w+)\s*=\s*\(\s*\)\s*=>\s*\{/g,
-		'function $1() {'
+		/^(\s*)(?:const|let|var)\s+(\w+)\s*=\s*\(\s*\)\s*=>\s*\{/gm,
+		'$1function $2() {'
 	)
 
 	result = result.replace(
-		/export\s+(?:const|let|var)\s+(\w+)\s*=\s*\(\s*\)\s*=>\s*\{/g,
-		'export function $1() {'
+		/^(\s*)export\s+(?:const|let|var)\s+(\w+)\s*=\s*\(\s*\)\s*=>\s*\{/gm,
+		'$1export function $2() {'
 	)
 
 	return result
