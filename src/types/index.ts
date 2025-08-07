@@ -33,12 +33,6 @@ export interface GasPluginOptions {
 	transformLogger?: boolean
 
 	/**
-	 * Whether to preserve comments when converting from TypeScript to JavaScript
-	 * @default true
-	 */
-	preserveComments?: boolean
-
-	/**
 	 * Whether to copy appsscript.json to output directory
 	 * @default true
 	 */
@@ -74,7 +68,6 @@ export const DEFAULT_OPTIONS: Required<GasPluginOptions> = {
 	exclude: ['**/*.d.ts', '**/*.test.ts', '**/*.spec.ts'],
 	outDir: 'dist',
 	transformLogger: true,
-	preserveComments: false,
 	copyAppsscriptJson: true,
 	enablePathAliases: true,
 	autoDetectPathAliases: true,

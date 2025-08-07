@@ -27,48 +27,6 @@ describe('vite-config', () => {
 		expect(config.build?.rollupOptions?.treeshake).toBe(false)
 	})
 
-	it('should configure esbuild for comment preservation when enabled', () => {
-		const config: UserConfig = {}
-		const entryFiles = { 'src/main': 'src/main.ts' }
-		const outputDir = 'dist'
-		const options = {
-			...DEFAULT_OPTIONS,
-			preserveComments: true,
-		}
-
-		applyGasViteConfig(config, entryFiles, outputDir, options)
-
-		expect(config.esbuild).toBeDefined()
-		// biome-ignore lint/suspicious/noExplicitAny: Type assertion for testing purposes
-		const esbuildOptions = config.esbuild as any
-		expect(esbuildOptions?.legalComments).toBe('inline')
-		expect(esbuildOptions?.minifyWhitespace).toBe(false)
-		expect(esbuildOptions?.minifyIdentifiers).toBe(false)
-		expect(esbuildOptions?.minifySyntax).toBe(false)
-		expect(esbuildOptions?.keepNames).toBe(true)
-	})
-
-	it('should not configure comment preservation when disabled', () => {
-		const config: UserConfig = {}
-		const entryFiles = { 'src/main': 'src/main.ts' }
-		const outputDir = 'dist'
-		const options = {
-			...DEFAULT_OPTIONS,
-			preserveComments: false,
-		}
-
-		applyGasViteConfig(config, entryFiles, outputDir, options)
-
-		expect(config.esbuild).toBeDefined()
-		// biome-ignore lint/suspicious/noExplicitAny: Type assertion for testing purposes
-		const esbuildOptions = config.esbuild as any
-		expect(esbuildOptions?.legalComments).toBeUndefined()
-		expect(esbuildOptions?.minifyWhitespace).toBeUndefined()
-		expect(esbuildOptions?.minifyIdentifiers).toBeUndefined()
-		expect(esbuildOptions?.minifySyntax).toBeUndefined()
-		expect(esbuildOptions?.keepNames).toBe(true)
-	})
-
 	it('should preserve existing build configuration', () => {
 		const config: UserConfig = {
 			build: {

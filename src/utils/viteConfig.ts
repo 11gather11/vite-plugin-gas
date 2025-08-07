@@ -106,15 +106,6 @@ export function applyGasViteConfig(
 	config.esbuild.target = 'es2017'
 	config.esbuild.format = 'esm'
 	config.esbuild.keepNames = true // Preserve function names
-
-	// Comment preservation configuration
-	if (options?.preserveComments) {
-		config.esbuild.legalComments = 'inline' // Preserve legal comments
-		// Disable minification to preserve all comments
-		config.esbuild.minifyWhitespace = false
-		config.esbuild.minifyIdentifiers = false
-		config.esbuild.minifySyntax = false
-	}
 }
 
 /**

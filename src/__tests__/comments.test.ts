@@ -5,8 +5,8 @@ import {
 	transformLogger,
 } from '../utils/codeTransformer'
 
-describe('Comment preservation', () => {
-	it('should preserve comments when removing module statements', () => {
+describe('String-based code transformation', () => {
+	it('should preserve comments in string transformation when removing module statements', () => {
 		const input = `/**
  * This is a JSDoc comment
  */
@@ -32,7 +32,7 @@ export function myFunction() {
 		expect(result).not.toContain('export')
 	})
 
-	it('should preserve comments when transforming logger', () => {
+	it('should preserve comments in string transformation when transforming logger', () => {
 		const input = `/**
  * Logger transformation test
  */
@@ -57,7 +57,7 @@ function testFunction() {
 		expect(result).toContain('Logger.warn')
 	})
 
-	it('should preserve comments when preserving GAS functions', () => {
+	it('should preserve comments in string transformation when preserving GAS functions', () => {
 		const input = `/**
  * GAS function for handling form submissions
  */
