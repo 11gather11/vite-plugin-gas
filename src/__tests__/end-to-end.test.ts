@@ -1,3 +1,4 @@
+import { join } from 'node:path'
 import type { UserConfig } from 'vite'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import gasPlugin from '../index'
@@ -232,10 +233,10 @@ function doPost(e: any) {
 			// Mock glob to return paths relative to current working directory
 			const cwd = process.cwd()
 			mockGlob.mockResolvedValue([
-				`${cwd}\\src\\main.ts`,
-				`${cwd}\\src\\utils\\helper.ts`,
-				`${cwd}\\src\\gas\\triggers.ts`,
-				`${cwd}\\src\\types\\index.ts`,
+				join(cwd, 'src', 'main.ts'),
+				join(cwd, 'src', 'utils', 'helper.ts'),
+				join(cwd, 'src', 'gas', 'triggers.ts'),
+				join(cwd, 'src', 'types', 'index.ts'),
 			])
 
 			// Mock file reading for empty check
@@ -244,10 +245,10 @@ function doPost(e: any) {
 			const entryFiles = await detectTypeScriptFiles(['src'], ['**/*.d.ts'])
 
 			expect(entryFiles).toEqual({
-				main: `${cwd}\\src\\main.ts`,
-				utils_helper: `${cwd}\\src\\utils\\helper.ts`,
-				gas_triggers: `${cwd}\\src\\gas\\triggers.ts`,
-				types_index: `${cwd}\\src\\types\\index.ts`,
+				main: join(cwd, 'src', 'main.ts'),
+				utils_helper: join(cwd, 'src', 'utils', 'helper.ts'),
+				gas_triggers: join(cwd, 'src', 'gas', 'triggers.ts'),
+				types_index: join(cwd, 'src', 'types', 'index.ts'),
 			})
 		})
 
