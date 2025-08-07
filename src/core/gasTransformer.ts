@@ -3,6 +3,7 @@ import type { GasPluginOptions } from '../types'
 import {
 	preserveGasFunctions,
 	removeModuleStatements,
+	transformArrowFunctions,
 	transformLogger,
 } from '../utils/codeTransformer'
 
@@ -62,7 +63,8 @@ export class GasTransformer {
 				fileName.endsWith('.js') &&
 				typeof chunk.code === 'string'
 			) {
-				// Apply additional GAS-specific transformations
+				// Apply GAS-specific transformations
+				chunk.code = transformArrowFunctions(chunk.code)
 				chunk.code = preserveGasFunctions(chunk.code)
 				chunk.code = removeModuleStatements(chunk.code)
 

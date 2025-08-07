@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2025-08-07
+
+### � Enhanced Arrow Function Support
+- **Improved GAS Library Compatibility**: Enhanced arrow function transformation for better Google Apps Script library support
+  - Arrow functions now properly converted to function declarations for GAS runtime compatibility
+  - Supports complex arrow functions with destructuring parameters
+  - Handles both export const and regular const arrow functions
+
+### 🔧 Build Target Optimization
+- **ES2017 Target**: Changed build target from ES5 to ES2017 for modern GAS compatibility
+  - Better performance while maintaining full GAS compatibility
+  - Supports modern JavaScript features like const/let, async/await
+  - Arrow functions still converted for library compatibility
+
+### 🏗️ Architecture Improvements
+- **Code Organization**: Moved arrow function transformation logic to utils module
+  - Added `transformArrowFunctions` utility function in `utils/codeTransformer.ts`
+  - Improved separation of concerns and testability
+  - TypeScript files now processed directly for arrow function conversion
+
+### 🧪 Testing
+- **Comprehensive Test Coverage**: Added dedicated tests for arrow function transformation
+  - Tests for various arrow function patterns
+  - Validation of export const arrow function conversion
+  - Edge case handling for destructuring parameters
+  - Better separation of concerns between transformation logic and orchestration
+  - Improved testability with dedicated test files
+  - Consistent code transformation architecture
+
+### 🧪 Testing
+- **Added comprehensive tests**: New test suite for arrow function transformation
+  - Tests for various arrow function patterns
+  - Integration tests with TypeScript processing
+  - Better coverage of GAS compatibility scenarios
+
 ## [0.5.0] - 2025-08-07
 
 ### ✨ New Features

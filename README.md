@@ -13,10 +13,10 @@ A Vite plugin for Google Apps Script development with TypeScript support.
 - 🚀 **Built-in TypeScript Support** - Uses Vite's native esbuild for TypeScript compilation (no external TypeScript plugin required)
 - 🛤️ **Auto Path Alias Resolution** - Automatically detects and configures path aliases from tsconfig.json, Vite config, and common patterns
 - 🔄 **Module Statement Removal** - Automatically removes import/export statements unsupported by GAS
-- ⚡ **Arrow Function Transformation** - Automatically converts arrow functions to function declarations for GAS compatibility
+- ⚡ **Arrow Function Transformation** - Automatically converts arrow functions to function declarations for GAS library compatibility
 - 🛡️ **GAS Function Protection** - Preserves special GAS functions (onEdit, onOpen, etc.) from optimization
 - ⚡ **Zero Configuration** - Works out-of-the-box with minimal setup
-- 🎯 **ES5 Compatibility** - Optimized for Google Apps Script runtime with automatic modern JS feature transformation
+- 🎯 **Modern JS Compatibility** - Optimized for Google Apps Script runtime with ES2017 target and automatic arrow function transformation
 - 📁 **Auto-Detection** - Automatically detects TypeScript files in specified directories
 - 🧹 **Smart File Filtering** - Automatically filters out empty files and comment-only files
 - 🔍 **console.log Transform** - Optionally transforms console.log to Logger.log for GAS compatibility
@@ -135,10 +135,11 @@ export default defineConfig({
 
 ### TypeScript Compilation Process
 
-1. **Vite's esbuild** compiles TypeScript to JavaScript with ES5 target for GAS compatibility
-   - Automatically transforms arrow functions to function declarations
-   - Converts modern JavaScript features to ES5-compatible code
-2. **vite-plugin-gas** processes the JavaScript output:
+1. **Vite's esbuild** compiles TypeScript to JavaScript with ES2017 target for modern GAS compatibility
+   - Uses ES2017 features like async/await, const/let, and more
+   - Preserves modern JavaScript features supported by GAS runtime
+2. **vite-plugin-gas** processes both TypeScript and JavaScript files:
+   - Converts arrow functions to function declarations for GAS library compatibility
    - Removes import/export statements
    - Transforms console.log to Logger.log (optional)
    - Preserves GAS special functions
@@ -179,7 +180,7 @@ export function doGet(): GoogleAppsScript.HTML.HtmlOutput {
 ```javascript
 // dist/main.js
 
-// Arrow functions converted to function declarations
+// Arrow functions converted to function declarations for GAS library compatibility
 function processData(data) {
   return data.map(function(item) {
     return item * 2;
@@ -197,7 +198,7 @@ function greetUser(name) {
 /* @preserve onEdit */ function onEdit(e) {
   // Log the edit event
   Logger.log('Edit detected');
-  var processed = processData([1, 2, 3]);
+  const processed = processData([1, 2, 3]);
   helper.processEdit(e);
 }
 
@@ -281,6 +282,13 @@ gas({
 ## Troubleshooting
 
 ### Common Issues
+
+**Error: "Transforming const to the configured target environment (es5) is not supported yet"**
+
+✅ **Solution**: This plugin now uses ES2017 target and handles arrow function conversion automatically
+- No need for ES5 target configuration
+- Arrow functions are converted to function declarations for GAS library compatibility
+- Modern JavaScript features are preserved for better performance
 
 **Error: "X is not exported by Y"**
 

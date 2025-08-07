@@ -1,4 +1,48 @@
 /**
+ * Transform arrow functions to regular functions for GAS library compatibility
+ */
+export function transformArrowFunctions(code: string): string {
+	let result = code
+
+	// Transform export const functionName = (params) => { body }
+	result = result.replace(
+		/export\s+const\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*\{/g,
+		'export function $1($2) {'
+	)
+
+	// Transform const/let/var functionName = (params) => { body }
+	result = result.replace(
+		/(?:const|let|var)\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*\{/g,
+		'function $1($2) {'
+	)
+
+	// Transform simple arrow functions: const func = (params) => expression
+	result = result.replace(
+		/(?:const|let|var)\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*([^;{]+);?/g,
+		'function $1($2) { return $3; }'
+	)
+
+	// Transform export const func = (params) => expression
+	result = result.replace(
+		/export\s+(?:const|let|var)\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>\s*([^;{]+);?/g,
+		'export function $1($2) { return $3; }'
+	)
+
+	// Handle arrow functions with no parameters: () => {}
+	result = result.replace(
+		/(?:const|let|var)\s+(\w+)\s*=\s*\(\s*\)\s*=>\s*\{/g,
+		'function $1() {'
+	)
+
+	result = result.replace(
+		/export\s+(?:const|let|var)\s+(\w+)\s*=\s*\(\s*\)\s*=>\s*\{/g,
+		'export function $1() {'
+	)
+
+	return result
+}
+
+/**
  * Remove import/export statements
  */
 export function removeModuleStatements(code: string): string {

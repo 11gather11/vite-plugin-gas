@@ -23,7 +23,7 @@ describe('vite-config', () => {
 		expect(config.build?.lib).toBe(false)
 		expect(config.build?.outDir).toBe(outputDir)
 		expect(config.build?.minify).toBe(false)
-		expect(config.build?.target).toBe('es5')
+		expect(config.build?.target).toBe('es2017')
 		expect(config.build?.rollupOptions?.treeshake).toBe(false)
 	})
 
