@@ -106,7 +106,6 @@ export function applyGasViteConfig(
 	config.esbuild = config.esbuild || {}
 	config.esbuild.target = 'es2017'
 	config.esbuild.format = 'esm'
-	config.esbuild.keepNames = true // Preserve function names
 }
 
 /**

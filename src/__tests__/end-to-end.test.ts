@@ -184,7 +184,6 @@ function doPost(e: any) {
 			if (config.esbuild) {
 				expect(config.esbuild.target).toBe('es2017')
 				expect(config.esbuild.format).toBe('esm')
-				expect(config.esbuild.keepNames).toBe(true)
 			}
 
 			// Verify path aliases
