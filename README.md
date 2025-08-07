@@ -68,7 +68,6 @@ export default defineConfig({
       
       // Code transformation
       transformLogger: true,
-      preserveComments: false,
       copyAppsscriptJson: true,
       
       // Path aliases (auto-detected by default)
@@ -126,7 +125,6 @@ export default defineConfig({
 | `exclude` | `string[]` | `['**/*.test.ts', '**/*.spec.ts']` | File patterns to exclude |
 | `outDir` | `string` | `'dist'` | Output directory for compiled files |
 | `transformLogger` | `boolean` | `true` | Replace console.log with Logger.log for GAS |
-| `preserveComments` | `boolean` | `false` | Preserve comments in TypeScript to JavaScript compilation |
 | `copyAppsscriptJson` | `boolean` | `true` | Automatically copy appsscript.json to output directory |
 | `enablePathAliases` | `boolean` | `true` | Enable automatic path aliases configuration |
 | `autoDetectPathAliases` | `boolean` | `true` | Auto-detect path aliases from tsconfig.json and project structure |
@@ -136,11 +134,10 @@ export default defineConfig({
 
 ### TypeScript Compilation Process
 
-1. **Vite's esbuild** compiles TypeScript to JavaScript with comment preservation
+1. **Vite's esbuild** compiles TypeScript to JavaScript
 2. **vite-plugin-gas** processes the JavaScript output:
    - Removes import/export statements
    - Transforms console.log to Logger.log (optional)
-   - Preserves JSDoc comments, line comments, and block comments
    - Preserves GAS special functions
    - Bundles dependencies
 

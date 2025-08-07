@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-08-07
+
+### 💥 Breaking Changes
+- **Removed `preserveComments` Feature**: Completely removed non-functional comment preservation feature
+  - Removed `preserveComments` option from `GasPluginOptions` interface
+  - Removed comment preservation logic from `applyGasViteConfig`
+  - This feature was documented but not actually working (only preserved `/* @__PURE__ */` comments)
+  - Users relying on this feature should use alternative comment preservation methods
+
+### 🧪 Testing Excellence
+- **Comprehensive Integration Testing**: Added 85 new tests for improved quality assurance
+  - Added 47 plugin integration tests (`plugin-integration.test.ts`)
+  - Added 38 end-to-end transformation pipeline tests (`end-to-end.test.ts`)
+  - Integration tests cover complete plugin lifecycle (config, transform, generateBundle, writeBundle hooks)
+  - E2E tests cover real-world GAS use cases (Google Sheets, Gmail automation scripts)
+  - Total test count: 119 tests with 100% success rate
+
+### 🔧 Technical Improvements
+- **Enhanced Type Safety**: Fixed all TypeScript strict null check warnings
+  - Added proper type guards for Vite plugin hook handling
+  - Improved type safety for `ObjectHook` vs function hook scenarios
+  - Fixed undefined possibility warnings with explicit null checks
+- **Improved Error Handling**: Better handling of plugin hook execution
+  - Graceful handling of both function and `ObjectHook` plugin hook types
+  - Enhanced mock context implementation for comprehensive testing
+  - Better error reporting in test scenarios
+
+### 🎯 Code Quality
+- **Zero TypeScript Warnings**: Achieved complete TypeScript strict mode compliance
+- **Production-Ready Testing**: All 119 tests passing with comprehensive coverage
+- **Clean Architecture**: Improved test organization with dedicated integration and E2E test suites
+
 ## [0.3.0] - 2025-08-04
 
 ### ✨ New Features
@@ -315,7 +347,10 @@ export default defineConfig({
 - ✅ Configurable logger replacement
 - ✅ Development and production build support
 
-[Unreleased]: https://github.com/11gather11/vite-plugin-gas/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/11gather11/vite-plugin-gas/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.4.0
+[0.3.1]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.3.1
+[0.3.0]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.3.0
 [0.2.0]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.2.0
 [0.1.18]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.1.18
 [0.1.17]: https://github.com/11gather11/vite-plugin-gas/releases/tag/v0.1.17
